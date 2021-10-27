@@ -1,0 +1,20 @@
+{
+  "mongo": {
+    "host": "localhost",
+    "port": 27017,
+    "dbname": "dbname",
+    "username": "username",
+    "password": "password"
+  },
+  "port": 8080,
+  "https": {
+    "enable": false,
+    "hsts": true,
+    "key": "localhost-key.pem",
+    "cert": "localhost.pem"
+  },
+  "cors": {
+    "enable": true,
+    "host": "http://localhost:8080"
+  }
+}
