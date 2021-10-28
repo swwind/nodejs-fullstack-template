@@ -8,7 +8,6 @@ import { MyStore } from "../store";
 
 const store = useStore() as MyStore;
 
-store.commit('ssr/status', 404);
-store.commit('ssr/title', '404 NOT FOUND');
-
+store.commit("ssr/status", 404);
+store.commit("ssr/title", "404 NOT FOUND");
 </script>

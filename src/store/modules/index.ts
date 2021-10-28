@@ -3,16 +3,16 @@ import {
   Mutations as UserMutations,
   Actions as UserActions,
   createUserModule,
-} from './user';
+} from "./user";
 
 import {
   State as SSRState,
   Mutations as SSRMutations,
   Actions as SSRActions,
-  createSSRModule
-} from './ssr';
+  createSSRModule,
+} from "./ssr";
 
-import { API } from '../../api';
+import { API } from "../../api";
 
 export const createModules = (api: API) => {
   return {
@@ -22,8 +22,8 @@ export const createModules = (api: API) => {
 };
 
 export type ModuleState = {
-  user: UserState,
-  ssr: SSRState,
+  user: UserState;
+  ssr: SSRState;
 };
 
 export type ModuleMutations = UserMutations & SSRMutations;

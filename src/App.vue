@@ -15,14 +15,14 @@ import { MyStore } from "./store";
 
 const store = useStore() as MyStore;
 
-await store.dispatch('user/whoami');
+await store.dispatch("user/whoami");
 
-store.commit('ssr/title', 'Hello world');
-
+store.commit("ssr/title", "Hello world");
 </script>
 
 <style lang="less">
-body, html {
+body,
+html {
   padding: 0;
   margin: 0;
 }
@@ -45,7 +45,7 @@ body, html {
       height: 50px;
       line-height: 50px;
       background: rgba(0, 0, 0, 0.1);
-      transition: background .2s;
+      transition: background 0.2s;
 
       &:hover {
         background: rgba(0, 0, 0, 0.2);

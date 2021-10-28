@@ -17,38 +17,46 @@ export type UserSessionDoc = {
   expires: Date;
 };
 
-const collPassword = db.collection<UserPasswordDoc>('user/password');
-const collProfile = db.collection<UserProfileDoc>('user/profile');
-const collSession = db.collection<UserSessionDoc>('user/session');
+const collPassword = db.collection<UserPasswordDoc>("user/password");
+const collProfile = db.collection<UserProfileDoc>("user/profile");
+const collSession = db.collection<UserSessionDoc>("user/session");
 
 export class Users {
-
-  static async addUser(username: string, password: string, email: string): Promise<Result<UserProfileDoc>> {
+  static async addUser(
+    username: string,
+    password: string,
+    email: string
+  ): Promise<Result<UserProfileDoc>> {
     const find = await collPassword.findOne({ username });
-    if (find) return 'user/exist';
+    if (find) return "user/exist";
 
     const result1 = await collPassword.insertOne({ username, password });
-    if (!result1.insertedId) return 'core/database_panicked';
+    if (!result1.insertedId) return "core/database_panicked";
 
     const profile = { username, email };
     const result2 = await collProfile.insertOne(profile);
-    if (!result2.insertedId) return 'core/database_panicked';
+    if (!result2.insertedId) return "core/database_panicked";
 
     return profile;
   }
 
-  static async getUserProfile(username: string): Promise<Result<UserProfileDoc>> {
+  static async getUserProfile(
+    username: string
+  ): Promise<Result<UserProfileDoc>> {
     const result = await collProfile.findOne({ username });
-    if (!result) return 'core/database_panicked';
+    if (!result) return "core/database_panicked";
 
     return result;
   }
 
-  static async verifyUser(username: string, password: string): Promise<Result<UserProfileDoc>> {
+  static async verifyUser(
+    username: string,
+    password: string
+  ): Promise<Result<UserProfileDoc>> {
     const find = await collPassword.findOne({ username });
-    if (!find) return 'user/not_exist';
+    if (!find) return "user/not_exist";
 
-    if (find.password !== password) return 'user/password_wrong';
+    if (find.password !== password) return "user/password_wrong";
 
     return this.getUserProfile(username);
   }
@@ -73,12 +81,19 @@ export class Users {
     return find.username;
   }
 
-  static async issueCookie(username: string, expires: Date): Promise<string | undefined> {
+  static async issueCookie(
+    username: string,
+    expires: Date
+  ): Promise<string | undefined> {
     const cookie = randomString(36);
 
-    const result = await collSession.findOneAndUpdate({ username }, {
-      $set: { expires, cookie }
-    }, { upsert: true });
+    const result = await collSession.findOneAndUpdate(
+      { username },
+      {
+        $set: { expires, cookie },
+      },
+      { upsert: true }
+    );
 
     if (!result.ok) return;
 

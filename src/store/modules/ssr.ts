@@ -4,24 +4,23 @@ export type State = {
   status: number;
   title: string;
   meta: Record<string, string>;
-}
+};
 
 export type Mutations<S = State> = {
   "ssr/status"(state: S, payload: number): void;
   "ssr/title"(state: S, payload: string): void;
-  "ssr/meta"(state: S, payload: { name: string; content: string; }): void;
-}
+  "ssr/meta"(state: S, payload: { name: string; content: string }): void;
+};
 
-export type Actions = { }
+export type Actions = Record<string, never>;
 
 export function createSSRModule(_api: API) {
-  
   const state = (): State => ({
     status: 200,
     title: "Example Title",
-    meta: { },
+    meta: {},
   });
-  
+
   const mutations: Mutations = {
     "ssr/status"(state, payload) {
       state.status = payload;
@@ -34,11 +33,11 @@ export function createSSRModule(_api: API) {
     },
   };
 
-  const actions: Actions = { };
-  
+  const actions: Actions = {};
+
   return {
     state,
     mutations,
     actions,
-  }
+  };
 }

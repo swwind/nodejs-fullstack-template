@@ -1,9 +1,9 @@
 <template>
   <Suspense>
-    <App/>
+    <App />
   </Suspense>
 </template>
 
 <script lang="ts" setup>
-import App from './App.vue';
+import App from "./App.vue";
 </script>

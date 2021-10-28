@@ -1,14 +1,14 @@
-import { createApp } from './main';
+import { createApp } from "./main";
 
 const { app, router, store } = createApp();
 
-const isSSR = '__INITIAL_STATE__' in window;
+const isSSR = "__INITIAL_STATE__" in window;
 
 if (isSSR) {
-  store.replaceState((window as any)['__INITIAL_STATE__']);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  store.replaceState((window as any)["__INITIAL_STATE__"]);
 }
 
-router.isReady()
-  .then(() => {
-    app.mount('#app', isSSR);
-  });
+router.isReady().then(() => {
+  app.mount("#app", isSSR);
+});
