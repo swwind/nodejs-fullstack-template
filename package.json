@@ -1,6 +1,6 @@
 {
-  "name": "hitwhoj",
-  "version": "0.0.0",
+  "name": "example",
+  "version": "1.0.0",
   "scripts": {
     "dev": "cross-env DEV=true node build/main.js",
     "clean": "rm -rf build dist",
@@ -11,8 +11,10 @@
     "start": "node build/main.js",
     "debug": "cross-env DEV=true node --inspect-brk build/main.js",
     "lint:client": "eslint --ext ts,vue src -f ./node_modules/eslint-friendly-formatter",
-    "lint:server": "eslint --ext ts app -f ./node_modules/eslint-friendly-formatter"
+    "lint:server": "eslint --ext ts app -f ./node_modules/eslint-friendly-formatter",
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts"
   },
+  "license": "WTFPL",
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@vue/compiler-sfc": "^3.2.20",
@@ -32,22 +34,27 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.22",
     "@types/koa": "^2.13.4",
     "@types/koa-router": "^7.4.4",
     "@types/koa-static": "^4.0.2",
     "@types/koa__cors": "^3.0.3",
+    "@types/mocha": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "@vitejs/plugin-vue": "^1.9.4",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^8.0.0",
     "@vuedx/typescript-plugin-vue": "^0.7.4",
+    "chai": "^4.3.4",
     "eslint": "^8.1.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.20.0",
+    "mocha": "^9.1.3",
     "prettier": "^2.4.1",
     "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
     "typescript": "^4.4.4",
     "vite": "^2.6.12",
     "webpack": "^5.60.0",
