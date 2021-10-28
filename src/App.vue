@@ -13,7 +13,7 @@
 import { useStore } from "vuex";
 import { MyStore } from "./store";
 
-const store = useStore() as MyStore;
+const store = useStore() as unknown as MyStore;
 
 await store.dispatch("user/whoami");
 

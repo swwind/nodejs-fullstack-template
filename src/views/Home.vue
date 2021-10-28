@@ -10,7 +10,7 @@ import { toRefs } from "@vue/reactivity";
 import { useStore } from "vuex";
 import { MyStore } from "../store";
 
-const store = useStore() as MyStore;
+const store = useStore() as unknown as MyStore;
 
 const { user } = toRefs(store.state);
 </script>
