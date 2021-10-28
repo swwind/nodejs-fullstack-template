@@ -33,3 +33,7 @@ jobs:
         run: |
           yarn lint:client
           yarn lint:server
+
+      - name: Test
+        run: |
+          yarn test
