@@ -18,10 +18,10 @@ export function randomString(length: number) {
   return crypto.randomBytes(length).toString("hex");
 }
 
-const and = <T> (f: (t: T) => boolean, g: (t: T) => boolean) => (t: T) => f(t) && g(t);
-const not = <T> (fn: (t: T) => boolean) => (x: T) => !fn(x);
-const is = (type: string) => (x: any) => typeof x === type;
-const any = <T> (fn: (t: T) => boolean) => (a: T[]) => a.filter(fn).length > 0;
+export const and = <T> (f: (t: T) => boolean, g: (t: T) => boolean) => (t: T) => f(t) && g(t);
+export const not = <T> (fn: (t: T) => boolean) => (x: T) => !fn(x);
+export const is = (type: string) => (x: any) => typeof x === type;
+export const any = <T> (fn: (t: T) => boolean) => (a: T[]) => a.filter(fn).length > 0;
 
 export enum Types {
   String,

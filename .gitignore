@@ -9,3 +9,4 @@
 *.log
 *.pem
 /.vscode
+/.nyc_output

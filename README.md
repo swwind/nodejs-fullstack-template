@@ -40,6 +40,12 @@ yarn build:server
 # or build all threes parts within one command
 yarn build
 
+# ======== deploy =======
+
+# after building the project, you can easily start
+# the server via `yarn start`
+yarn start
+
 # ======== develop =======
 
 # start a frontend HMR development environment
@@ -69,5 +75,7 @@ yarn lint:fix
 
 # it just works
 yarn test
+# check coverage
+yarn coverage
 
 ```

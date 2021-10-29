@@ -14,7 +14,8 @@
     "lint:fix": "yarn lint:client --fix && yarn lint:server --fix",
     "lint:client": "eslint --ext ts,vue src -f ./node_modules/eslint-friendly-formatter",
     "lint:server": "eslint --ext ts app -f ./node_modules/eslint-friendly-formatter",
-    "test": "cross-env TS_NODE_COMPILER_OPTIONS='{\"types\":[\"mocha\",\"node\"],\"module\":\"commonjs\"}' mocha -r ts-node/register tests/**/*.spec.ts"
+    "test": "cross-env TS_NODE_COMPILER_OPTIONS='{\"types\":[\"mocha\",\"node\"],\"module\":\"commonjs\"}' mocha -r ts-node/register tests/**/*.spec.ts",
+    "coverage": "nyc yarn test"
   },
   "license": "WTFPL",
   "dependencies": {
@@ -54,6 +55,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.20.0",
     "mocha": "^9.1.3",
+    "nyc": "^15.1.0",
     "prettier": "^2.4.1",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
