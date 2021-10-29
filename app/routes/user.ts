@@ -1,5 +1,5 @@
 import Router from "koa-router";
-import { Types } from "utils";
+import { Types } from "../utils";
 import { Users } from "../modules/user";
 import { State, Tools } from "../router";
 
