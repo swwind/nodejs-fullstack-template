@@ -18,17 +18,21 @@ export type APIResponse<T> = {
   data: T;
 };
 
+export type APICoreConfig = Partial<{
+  cookie: string;
+  host: string;
+}>;
+
 /**
  * Create a API request core
- * @param cookie if is SSR, then give user's cookie
  */
-export const createAPICore = (cookie?: string, host?: string) => {
+export const createAPICore = (config?: APICoreConfig) => {
   const request = axios.create({
-    baseURL: host ? host + "/api" : "/api",
+    baseURL: (config?.host ?? "") + "/api",
     validateStatus() {
       return true;
     },
-    headers: cookie ? { Cookie: cookie } : {},
+    headers: config?.cookie ? { Cookie: config.cookie } : {},
   });
 
   const makeRequest = async <T = Record<string, never>>(

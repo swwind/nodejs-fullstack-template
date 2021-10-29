@@ -1,5 +1,6 @@
 import { createApp } from "./main";
 import { renderToString, SSRContext } from "@vue/server-renderer";
+import { APICoreConfig } from "./api/utils";
 
 function escapeHtml(unsafe: string) {
   return unsafe
@@ -13,10 +14,9 @@ function escapeHtml(unsafe: string) {
 export async function render(
   url: string,
   manifest: Record<string, string[]>,
-  cookie?: string,
-  host?: string
+  config: APICoreConfig
 ) {
-  const { app, router, store } = createApp(cookie, host);
+  const { app, router, store } = createApp(config);
 
   // set the router to the desired URL before rendering
   router.push(url);

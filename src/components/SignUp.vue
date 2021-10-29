@@ -24,8 +24,6 @@ const password2 = ref("");
 const email = ref("");
 
 async function submit() {
-  console.log("???");
-
   if (password1.value !== password2.value) {
     return;
   }

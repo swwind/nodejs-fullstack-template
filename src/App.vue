@@ -14,12 +14,14 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from "vue";
+import { onServerPrefetch, toRefs } from "vue";
 import { useStore } from "./store";
 
 const store = useStore();
 
-await store.dispatch("user/whoami");
+onServerPrefetch(async () => {
+  await store.dispatch("user/whoami");
+});
 
 store.commit("ssr/title", "Hello world");
 store.commit("ssr/meta", {

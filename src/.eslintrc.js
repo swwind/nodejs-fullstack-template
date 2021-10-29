@@ -15,5 +15,6 @@ module.exports = {
   rules: {
     'vue/no-multiple-template-root': 0,
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/ban-types': 0,
   }
 };

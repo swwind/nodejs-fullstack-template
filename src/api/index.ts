@@ -1,8 +1,8 @@
-import { createAPICore } from "./utils";
+import { APICoreConfig, createAPICore } from "./utils";
 import { createUserAPI } from "./user";
 
-export function createAPI(cookie?: string, host?: string) {
-  const core = createAPICore(cookie, host);
+export function createAPI(config?: APICoreConfig) {
+  const core = createAPICore(config);
 
   return {
     user: createUserAPI(core),

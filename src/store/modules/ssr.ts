@@ -12,7 +12,7 @@ export type Mutations<S = State> = {
   "ssr/meta"(state: S, payload: { name: string; content: string }): void;
 };
 
-export type Actions = Record<string, never>;
+export type Actions = {};
 
 export function createSSRModule(_api: API) {
   const state = (): State => ({

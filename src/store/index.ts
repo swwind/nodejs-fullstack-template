@@ -12,12 +12,10 @@ import {
   ModuleMutations as RootMutations,
 } from "./modules";
 
-export const createStore = (api: API) =>
+export const createStore = (api: API): Store<RootState> =>
   createVuexStore({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     modules: createModules(api),
-  });
+  } as any);
 
 type OptionalSpread<T> = T extends undefined ? [] : [T];
 
@@ -49,5 +47,5 @@ export type MyStore = Omit<Store<RootState>, "commit" | "dispatch"> & {
 };
 
 export function useStore() {
-  return useVuexStore() as unknown as MyStore;
+  return useVuexStore() as MyStore;
 }

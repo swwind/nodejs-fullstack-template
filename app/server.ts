@@ -76,9 +76,8 @@ app.use(async (ctx) => {
       render: (
         url: string,
         manifest: Record<string, string[]>,
-        cookie?: string,
-        host?: string
-      ) => Promise<string[]>;
+        config: Partial<{ cookie: string; host: string }>,
+      ) => Promise<[string, string, string, string, number]>;
     if (!isProd) {
       // always read fresh template in dev
       template = await fs.readFile("index.html", "utf-8");
@@ -89,17 +88,20 @@ app.use(async (ctx) => {
       render = SSRRender;
     }
     const cookie = ctx.get("Cookie");
+    const host = `${config.https.enable ? "https" : "http"}://localhost${
+      (config.https.enable && config.port === 443) || config.port === 80
+        ? ""
+        : ":" + config.port
+    }`;
 
     const [appHtml, preloadLinks, metadata, initialState, status] =
       await render(
         url,
         manifest,
-        cookie,
-        `${config.https.enable ? "https" : "http"}://localhost${
-          (config.https.enable && config.port === 443) || config.port === 80
-            ? ""
-            : ":" + config.port
-        }`
+        {
+          cookie,
+          host,
+        }
       );
 
     const html = template
@@ -109,7 +111,7 @@ app.use(async (ctx) => {
       )
       .replace(`<!-- app-html -->`, appHtml);
 
-    ctx.response.status = Number(status);
+    ctx.response.status = status;
     ctx.response.set("Content-Type", "text/html");
     ctx.response.body = html;
   } catch (e) {
