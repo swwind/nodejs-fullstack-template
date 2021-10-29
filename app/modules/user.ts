@@ -22,7 +22,6 @@ const collProfile = db.collection<UserProfileDoc>("user/profile");
 const collSession = db.collection<UserSessionDoc>("user/session");
 
 export class Users {
-
   /**
    * Sign up a new user
    */
@@ -52,7 +51,7 @@ export class Users {
     username: string
   ): Promise<Result<UserProfileDoc>> {
     const result = await collProfile.findOne({ _id: username });
-    if (!result) return err('user/not_exist');
+    if (!result) return err("user/not_exist");
 
     return ok(result);
   }
@@ -66,7 +65,7 @@ export class Users {
   ): Promise<Result<Array<UserProfileDoc>>> {
     const result = await collProfile.find({ _id: { $in: username } }).toArray();
     if (result.length !== username.length) {
-      return err('user/not_exist');
+      return err("user/not_exist");
     }
     return ok(result);
   }

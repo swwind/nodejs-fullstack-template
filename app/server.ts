@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import Koa from "koa";
 import router from "./router";
 import body from "koa-body";
@@ -76,7 +75,7 @@ app.use(async (ctx) => {
       render: (
         url: string,
         manifest: Record<string, string[]>,
-        config: Partial<{ cookie: string; host: string }>,
+        config: Partial<{ cookie: string; host: string }>
       ) => Promise<[string, string, string, string, number]>;
     if (!isProd) {
       // always read fresh template in dev
@@ -95,14 +94,10 @@ app.use(async (ctx) => {
     }`;
 
     const [appHtml, preloadLinks, metadata, initialState, status] =
-      await render(
-        url,
-        manifest,
-        {
-          cookie,
-          host,
-        }
-      );
+      await render(url, manifest, {
+        cookie,
+        host,
+      });
 
     const html = template
       .replace(

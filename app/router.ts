@@ -2,34 +2,13 @@
 import Router from "koa-router";
 import { Errors } from "./errors";
 import { Users } from "./modules/user";
-import { getStatus } from "./utils";
+import { getStatus, Types, validator } from "./utils";
 
 import user from "./routes/user";
 
 export type State = {
   username: string;
 };
-
-const and = <T> (f: (t: T) => boolean, g: (t: T) => boolean) => (t: T) => f(t) && g(t);
-const not = <T> (fn: (t: T) => boolean) => (x: T) => !fn(x);
-const is = (type: string) => (x: any) => typeof x === type;
-const any = <T> (fn: (t: T) => boolean) => (a: T[]) => a.filter(fn).length > 0;
-
-export enum Types {
-  String,
-  Number,
-  StringArray,
-  NumberArray,
-}
-
-function validator(type: Types) {
-  switch (type) {
-    case Types.String: return is('string');
-    case Types.Number: return is('number');
-    case Types.StringArray: return and(Array.isArray, not(any(not(is('string')))));
-    case Types.NumberArray: return and(Array.isArray, not(any(not(is('number')))));
-  }
-}
 
 export type Tools = {
   end<T extends Record<string, unknown>>(status: number, data: T): void;
@@ -47,11 +26,10 @@ export type Tools = {
     body(name: string, type: Types.Number): number | undefined;
     body(name: string, type: Types.StringArray): string[] | undefined;
     body(name: string, type: Types.NumberArray): number[] | undefined;
-  }
+  };
 };
 
 const router = new Router<State, Tools>();
-
 
 router.use("/", async (ctx, next) => {
   ctx.state.username = "";
@@ -80,9 +58,9 @@ router.use("/", async (ctx, next) => {
     return (name: string, type: Types) => {
       const value = body?.[name];
       if (validator(type)(value)) {
-        return value;        
+        return value;
       }
-    }
+    };
   }
 
   ctx.data = {

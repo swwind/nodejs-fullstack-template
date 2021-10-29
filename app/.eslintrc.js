@@ -9,6 +9,8 @@ module.exports = {
   parserOptions: {
     parser: "@typescript-eslint/parser"
   },
+  plugins: ["prettier"],
   rules: {
+    "prettier/prettier": 2,
   }
 };

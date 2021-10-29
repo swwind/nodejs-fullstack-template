@@ -61,6 +61,9 @@ yarn lint:client --fix
 # lint backend code (or with auto fix)
 yarn lint:server
 yarn lint:server --fix
+# or lint both above
+yarn lint
+yarn lint:fix
 
 # ======== test =======
 
