@@ -1,8 +1,16 @@
 import { Errors } from "./errors";
 import crypto from "crypto";
 
-export type Result<T> = Errors | T;
-export type EmptyResult = Errors | undefined;
+export type Err = { error: Errors, ok: false };
+export type Result<T> = Err | { result: T, ok: true };
+export type EmptyResult = Err | undefined;
+
+export function ok<T>(result: T): Result<T> {
+  return { result, ok: true };
+}
+export function err(error: Errors): Err {
+  return { error, ok: false };
+}
 
 export function randomString(length: number) {
   return crypto.randomBytes(length).toString("hex");

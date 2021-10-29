@@ -8,9 +8,9 @@ router.post("/whoami", async (ctx) => {
   if (!ctx.state.username) return ctx.fail("user/login_required");
 
   const profile = await Users.getUserProfile(ctx.state.username);
-  if (typeof profile === "string") return ctx.fail(profile);
+  if (!profile.ok) return ctx.fail(profile.error);
 
-  ctx.end(200, profile);
+  ctx.end(200, profile.result);
 });
 
 router.post("/signin", async (ctx) => {
@@ -23,8 +23,9 @@ router.post("/signin", async (ctx) => {
 
   if (!username || !password) return ctx.fail("common/wrong_arguments");
 
-  const profile = await Users.verifyUser(username, password);
-  if (typeof profile === "string") return ctx.fail(profile);
+  const success = await Users.verifyUser(username, password);
+  if (!success.ok) return ctx.fail(success.error);
+  if (!success.result) return ctx.fail('user/password_wrong');
 
   // issue a cookie for a month
   const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
@@ -35,7 +36,10 @@ router.post("/signin", async (ctx) => {
     expires,
   });
 
-  ctx.end(200, profile);
+  const profile = await Users.getUserProfile(username);
+  if (!profile.ok) return ctx.fail(profile.error);
+
+  ctx.end(200, profile.result);
 });
 
 router.post("/signup", async (ctx) => {
@@ -51,7 +55,7 @@ router.post("/signup", async (ctx) => {
     return ctx.fail("common/wrong_arguments");
 
   const profile = await Users.addUser(username, password, email);
-  if (typeof profile === "string") return ctx.fail(profile);
+  if (!profile.ok) return ctx.fail(profile.error);
 
   // issue a cookie for a month
   const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
@@ -62,7 +66,7 @@ router.post("/signup", async (ctx) => {
     expires,
   });
 
-  ctx.end(200, profile);
+  ctx.end(200, profile.result);
 });
 
 export default router;

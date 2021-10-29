@@ -12,7 +12,7 @@
     "debug": "cross-env DEV=true node --inspect-brk build/main.js",
     "lint:client": "eslint --ext ts,vue src -f ./node_modules/eslint-friendly-formatter",
     "lint:server": "eslint --ext ts app -f ./node_modules/eslint-friendly-formatter",
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts"
+    "test": "cross-env TS_NODE_COMPILER_OPTIONS='{\"types\":[\"mocha\",\"node\"]}' mocha -r ts-node/register tests/**/*.spec.ts"
   },
   "license": "WTFPL",
   "dependencies": {

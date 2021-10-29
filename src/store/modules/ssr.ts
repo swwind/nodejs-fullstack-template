@@ -27,6 +27,9 @@ export function createSSRModule(_api: API) {
     },
     "ssr/title"(state, payload) {
       state.title = payload;
+      if (!import.meta.env.SSR) {
+        document.title = payload;
+      }
     },
     "ssr/meta"(state, payload) {
       state.meta[payload.name] = payload.content;
