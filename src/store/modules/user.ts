@@ -1,4 +1,4 @@
-import { ArgumentedActionContext as Context } from "..";
+import { ArgumentedActionContext as ActionContext } from "..";
 import { API } from "../../api";
 
 export type State = {
@@ -11,16 +11,16 @@ export type Mutations<S = State> = {
 };
 
 export type Actions<S = State> = {
-  "user/whoami"(actx: Context<S>): Promise<boolean>;
+  "user/whoami"(actx: ActionContext<S>): Promise<boolean>;
   "user/signin"(
-    actx: Context<S>,
+    actx: ActionContext<S>,
     payload: {
       username: string;
       password: string;
     }
   ): Promise<boolean>;
   "user/signup"(
-    actx: Context<S>,
+    actx: ActionContext<S>,
     payload: {
       username: string;
       password: string;
@@ -47,7 +47,7 @@ export function createUserModule(api: API) {
       const res = await api.user.whoami();
       if (res.status === 200) {
         commit("user/update", {
-          username: res.data.username,
+          username: res.data._id,
           email: res.data.email,
         });
         return true;

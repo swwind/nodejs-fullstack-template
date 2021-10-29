@@ -3,10 +3,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useStore } from "vuex";
-import { MyStore } from "../store";
+import { useStore } from "../store";
 
-const store = useStore() as MyStore;
+const store = useStore();
 
 store.commit("ssr/status", 404);
 store.commit("ssr/title", "404 NOT FOUND");

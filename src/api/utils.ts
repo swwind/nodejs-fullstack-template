@@ -58,7 +58,7 @@ export const createAPICore = (cookie?: string, host?: string) => {
   };
 
   const makeJSONRequest = (method: Method) => {
-    return <D = Record<string, never>, T = Record<string, never>>(
+    return <T = Record<string, never>, D = Record<string, unknown>>(
       url: string,
       data?: D,
       headers?: Record<string, string>

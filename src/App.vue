@@ -1,8 +1,12 @@
 <template>
   <ul class="nav">
     <li><router-link to="/">Home</router-link></li>
-    <li><router-link to="/signin">Sign In</router-link></li>
-    <li><router-link to="/signup">Sign Up</router-link></li>
+    <li v-if="!user.username">
+      <router-link to="/signin">Sign In</router-link>
+    </li>
+    <li v-if="!user.username">
+      <router-link to="/signup">Sign Up</router-link>
+    </li>
   </ul>
   <div class="content">
     <router-view />
@@ -10,14 +14,20 @@
 </template>
 
 <script lang="ts" setup>
-import { useStore } from "vuex";
-import { MyStore } from "./store";
+import { toRefs } from "vue";
+import { useStore } from "./store";
 
-const store = useStore() as MyStore;
+const store = useStore();
 
 await store.dispatch("user/whoami");
 
 store.commit("ssr/title", "Hello world");
+store.commit("ssr/meta", {
+  name: "description",
+  content: "desc is not allowed in this page",
+});
+
+const { user } = toRefs(store.state);
 </script>
 
 <style lang="less">
@@ -33,6 +43,11 @@ html {
   width: 80%;
   text-align: center;
   margin: 0 auto;
+
+  .nav {
+    padding: 0;
+    margin: 0;
+  }
 
   li {
     display: inline-block;

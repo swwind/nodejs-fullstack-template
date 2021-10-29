@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import * as config from "../config.json";
+import config from "../config.json";
 
 const mongourl = `mongodb://${config.mongo.username}:${encodeURIComponent(
   config.mongo.password

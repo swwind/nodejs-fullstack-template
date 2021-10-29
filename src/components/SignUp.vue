@@ -1,20 +1,21 @@
 <template>
   <div class="signup">
-    <input type="text" v-model="username" />
-    <input type="password" v-model="password1" />
-    <input type="password" v-model="password2" />
-    <input type="email" v-model="email" />
-    <button @click="submit">sign up</button>
+    <form>
+      <input type="text" v-model="username" />
+      <input type="password" v-model="password1" />
+      <input type="password" v-model="password2" />
+      <input type="email" v-model="email" />
+      <input type="button" @click="submit" value="sign up" />
+    </form>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-import { MyStore } from "../store";
+import { useStore } from "../store";
 
-const store = useStore() as MyStore;
+const store = useStore();
 const router = useRouter();
 
 const username = ref("");
@@ -22,7 +23,9 @@ const password1 = ref("");
 const password2 = ref("");
 const email = ref("");
 
-const submit = async () => {
+async function submit() {
+  console.log("???");
+
   if (password1.value !== password2.value) {
     return;
   }
@@ -36,7 +39,7 @@ const submit = async () => {
   if (success) {
     router.push("/");
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

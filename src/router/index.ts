@@ -5,8 +5,8 @@ import {
   createWebHistory,
 } from "vue-router";
 
-import SignIn from "../components/SignIn.vue";
-import SignUp from "../components/SignUp.vue";
+const SignIn = () => import("../components/SignIn.vue");
+const SignUp = () => import("../components/SignUp.vue");
 
 import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";

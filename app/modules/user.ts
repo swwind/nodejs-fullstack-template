@@ -79,7 +79,7 @@ export class Users {
     username: string,
     password: string
   ): Promise<Result<boolean>> {
-    const find = await collPassword.findOne({ username });
+    const find = await collPassword.findOne({ _id: username });
     if (!find) return err("user/not_exist");
     return ok(find.password === password);
   }

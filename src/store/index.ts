@@ -1,5 +1,10 @@
 import { API } from "../api";
-import { ActionContext, createStore as createVuexStore, Store } from "vuex";
+import {
+  ActionContext,
+  createStore as createVuexStore,
+  Store,
+  useStore as useVuexStore,
+} from "vuex";
 import {
   createModules,
   ModuleState as RootState,
@@ -8,7 +13,9 @@ import {
 } from "./modules";
 
 export const createStore = (api: API) =>
-  createVuexStore<RootState>({
+  createVuexStore({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     modules: createModules(api),
   });
 
@@ -40,3 +47,7 @@ export type MyStore = Omit<Store<RootState>, "commit" | "dispatch"> & {
     ...payload: OptionalSpread<Parameters<RootActions[K]>[1]>
   ): ReturnType<RootActions[K]>;
 };
+
+export function useStore() {
+  return useVuexStore() as unknown as MyStore;
+}

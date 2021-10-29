@@ -1,42 +1,25 @@
 import { APICore } from "./utils";
+import type { UserProfileDoc } from "../../app/modules/user";
 
 export function createUserAPI(core: APICore) {
   return {
     whoami() {
-      return core.makePOSTRequest<
-        never,
-        {
-          username: string;
-          email: string;
-        }
-      >("/whoami");
+      return core.makePOSTRequest<UserProfileDoc>("/whoami");
     },
 
     signIn(username: string, password: string) {
-      return core.makePOSTRequest<
-        {
-          username: string;
-          password: string;
-        },
-        {
-          username: string;
-          email: string;
-        }
-      >("/signin", { username, password });
+      return core.makePOSTRequest<UserProfileDoc>("/signin", {
+        username,
+        password,
+      });
     },
 
     signUp(username: string, password: string, email: string) {
-      return core.makePOSTRequest<
-        {
-          username: string;
-          password: string;
-          email: string;
-        },
-        {
-          username: string;
-          email: string;
-        }
-      >("/signup", { username, password, email });
+      return core.makePOSTRequest<UserProfileDoc>("/signup", {
+        username,
+        password,
+        email,
+      });
     },
   };
 }
