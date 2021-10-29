@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import { Users } from "../modules/user";
-import { State, Tools } from "../router";
+import { State, Tools, Types } from "../router";
 
 const router = new Router<State, Tools>();
 
@@ -16,10 +16,8 @@ router.post("/whoami", async (ctx) => {
 router.post("/signin", async (ctx) => {
   if (ctx.state.username) return ctx.fail("user/logout_required");
 
-  const { username, password } = ctx.getBody({
-    username: "",
-    password: "",
-  });
+  const username = ctx.data.body('username', Types.String) ?? '';
+  const password = ctx.data.body('password', Types.String) ?? '';
 
   if (!username || !password) return ctx.fail("common/wrong_arguments");
 
@@ -45,11 +43,9 @@ router.post("/signin", async (ctx) => {
 router.post("/signup", async (ctx) => {
   if (ctx.state.username) return ctx.fail("user/logout_required");
 
-  const { username, password, email } = ctx.getBody({
-    username: "",
-    password: "",
-    email: "",
-  });
+  const username = ctx.data.body('username', Types.String) ?? '';
+  const password = ctx.data.body('password', Types.String) ?? '';
+  const email = ctx.data.body('email', Types.String) ?? '';
 
   if (!username || !password || !email)
     return ctx.fail("common/wrong_arguments");

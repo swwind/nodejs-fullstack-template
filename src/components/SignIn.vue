@@ -2,7 +2,7 @@
   <div class="signin">
     <input type="text" v-model="username" />
     <input type="password" v-model="password" />
-    <button @click="submit">sign in</button>
+    <input type="button" @click="submit" value="sign in" />
   </div>
 </template>
 

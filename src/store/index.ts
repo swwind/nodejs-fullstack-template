@@ -12,10 +12,11 @@ import {
   ModuleMutations as RootMutations,
 } from "./modules";
 
-export const createStore = (api: API): Store<RootState> =>
-  createVuexStore({
+export const createStore = (api: API): Store<RootState> => {
+  return createVuexStore({
     modules: createModules(api),
-  } as any);
+  });
+};
 
 type OptionalSpread<T> = T extends undefined ? [] : [T];
 
