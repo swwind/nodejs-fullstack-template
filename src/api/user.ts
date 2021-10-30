@@ -1,5 +1,5 @@
 import { APICore } from "./utils";
-import type { UserProfileDoc } from "../../app/modules/user";
+import type { UserFilesDoc, UserProfileDoc } from "../../app/modules/user";
 
 export function createUserAPI(core: APICore) {
   return {
@@ -21,5 +21,11 @@ export function createUserAPI(core: APICore) {
         email,
       });
     },
+
+    uploadFile(file: File) {
+      const formdata = new FormData();
+      formdata.set('file', file);
+      return core.makeMultipartRequest<UserFilesDoc>('/upload', formdata);
+    }
   };
 }

@@ -1,31 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Router from "koa-router";
+import type { File } from "formidable";
 import { Errors } from "./errors";
 import { Users } from "./modules/user";
 import { getStatus, Types, validator } from "./utils";
 
 import user from "./routes/user";
+import files from "./routes/files";
+import storage from "./routes/storage";
 
 export type State = {
   username: string;
 };
 
+export type { File };
+
 export type Tools = {
   end<T extends Record<string, unknown>>(status: number, data: T): void;
   fail(error: Errors): void;
   data: {
-    param(name: string, type: Types.String): string | undefined;
-    param(name: string, type: Types.Number): number | undefined;
-    param(name: string, type: Types.StringArray): string[] | undefined;
-    param(name: string, type: Types.NumberArray): number[] | undefined;
-    query(name: string, type: Types.String): string | undefined;
-    query(name: string, type: Types.Number): number | undefined;
-    query(name: string, type: Types.StringArray): string[] | undefined;
-    query(name: string, type: Types.NumberArray): number[] | undefined;
-    body(name: string, type: Types.String): string | undefined;
-    body(name: string, type: Types.Number): number | undefined;
-    body(name: string, type: Types.StringArray): string[] | undefined;
-    body(name: string, type: Types.NumberArray): number[] | undefined;
+    param(name: string, type: Types.String): string | null;
+    param(name: string, type: Types.Number): number | null;
+    param(name: string, type: Types.StringArray): string[] | null;
+    param(name: string, type: Types.NumberArray): number[] | null;
+    query(name: string, type: Types.String): string | null;
+    query(name: string, type: Types.Number): number | null;
+    query(name: string, type: Types.StringArray): string[] | null;
+    query(name: string, type: Types.NumberArray): number[] | null;
+    body(name: string, type: Types.String): string | null;
+    body(name: string, type: Types.Number): number | null;
+    body(name: string, type: Types.StringArray): string[] | null;
+    body(name: string, type: Types.NumberArray): number[] | null;
+    file(name: string): File | null;
+    files(name: string): File[] | null;
   };
 };
 
@@ -60,6 +67,7 @@ router.use("/", async (ctx, next) => {
       if (validator(type)(value)) {
         return value;
       }
+      return null;
     };
   }
 
@@ -67,11 +75,23 @@ router.use("/", async (ctx, next) => {
     param: parse(ctx.params),
     query: parse(ctx.request.query),
     body: parse(ctx.request.body),
+    file: (name: string) => {
+      const file = ctx.request.files?.[name];
+      if (!file) return null;
+      return Array.isArray(file) ? file[0] : file;
+    },
+    files: (name: string) => {
+      const file = ctx.request.files?.[name];
+      if (!file) return null;
+      return Array.isArray(file) ? file : [file];
+    },
   };
 
   await next();
 });
 
 router.use("/api", user.routes(), user.allowedMethods());
+router.use("/api", files.routes(), files.allowedMethods());
+router.use("/fs", storage.routes(), storage.allowedMethods());
 
 export default router;

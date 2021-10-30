@@ -6,6 +6,14 @@
     "username": "username",
     "password": "password"
   },
+  "minio": {
+    "host": "localhost",
+    "port": 9000,
+    "access_key": "cpAHPp6ew3xcXpOLK67ae2pCPbE9D3rC",
+    "secret_key": "Zcgr5y9TpfcOZ0xMTnjLzd7rPFGMnbhb",
+    "bucket": "bucket",
+    "region": "cn-sd-1"
+  },
   "port": 8080,
   "https": {
     "enable": false,

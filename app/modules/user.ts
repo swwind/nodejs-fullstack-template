@@ -1,5 +1,9 @@
 import db from "../db";
+import { File } from "../router";
 import { EmptyResult, err, ok, randomString, Result } from "../utils";
+import { Storage } from "./storage";
+import mimetypes from "mime-types";
+import { IMetadata } from "../minio";
 
 export type UserPasswordDoc = {
   _id: string;
@@ -17,9 +21,15 @@ export type UserSessionDoc = {
   expires: Date;
 };
 
+export type UserFilesDoc = {
+  username: string;
+  uuid: string;
+};
+
 const collPassword = db.collection<UserPasswordDoc>("user/password");
 const collProfile = db.collection<UserProfileDoc>("user/profile");
 const collSession = db.collection<UserSessionDoc>("user/session");
+const collFiles = db.collection<UserFilesDoc>("user/files");
 
 export class Users {
   /**
@@ -34,11 +44,11 @@ export class Users {
     if (find) return err("user/exist");
 
     const result1 = await collPassword.insertOne({ _id: username, password });
-    if (!result1.insertedId) return err("core/database_panicked");
+    if (!result1.acknowledged) return err("core/database_panicked");
 
     const profile = { _id: username, email };
     const result2 = await collProfile.insertOne(profile);
-    if (!result2.insertedId) return err("core/database_panicked");
+    if (!result2.acknowledged) return err("core/database_panicked");
 
     return ok(profile);
   }
@@ -132,5 +142,29 @@ export class Users {
     if (!result.ok) return null;
 
     return cookie;
+  }
+
+  /**
+   * Create a file
+   * @returns uuid
+   */
+  static async createPrivateFile(username: string, file: File) {
+    const uuid = randomString(16);
+    const filename = `/user/${username}/${uuid}`;
+    const mimetype =
+      (file.name && mimetypes.lookup(file.name)) || "application/octet-stream";
+    const meta: IMetadata = {
+      contenttype: file.type ?? mimetype,
+      filename: file.name || uuid,
+    };
+
+    const result1 = await Storage.writeFile(filename, file.path, meta);
+    if (result1) return result1;
+
+    const userFile: UserFilesDoc = { username, uuid };
+    const result2 = await collFiles.insertOne(userFile);
+    if (!result2.acknowledged) return err("core/database_panicked");
+
+    return ok(userFile);
   }
 }

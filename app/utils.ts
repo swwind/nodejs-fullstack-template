@@ -43,12 +43,30 @@ export function getStatus(error: Errors): number {
   switch (error) {
     case "core/database_panicked":     return 500;
     case "core/internal_server_error": return 500;
+    case 'core/storage_panicked':      return 500;
+    case 'storage/file_not_exist':     return 404;
+    case 'storage/permission_denied':  return 403;
     case "common/wrong_arguments":     return 400;
     case "user/not_exist":             return 403;
     case "user/exist":                 return 403;
     case "user/login_required":        return 401;
     case "user/logout_required":       return 403;
+    case 'user/invalid_username':      return 403;
     case "user/password_wrong":        return 403;
     case "user/permission_denied":     return 403;
   }
+}
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+ */
+export function encodeRFC5987ValueChars(str: string) {
+  return encodeURIComponent(str)
+    // Note that although RFC3986 reserves "!", RFC5987 does not,
+    // so we do not need to escape it
+    .replace(/['()]/g, escape) // i.e., %27 %28 %29
+    .replace(/\*/g, '%2A')
+    // The following are not required for percent-encoding per RFC5987,
+    // so we can allow for a little better readability over the wire: |`^
+    .replace(/%(?:7C|60|5E)/g, unescape);
 }

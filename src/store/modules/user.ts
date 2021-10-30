@@ -27,6 +27,10 @@ export type Actions<S = State> = {
       email: string;
     }
   ): Promise<boolean>;
+  'user/upload'(
+    actx: ActionContext<S>,
+    payload: File,
+  ): Promise<string | false>;
 };
 
 export function createUserModule(api: API) {
@@ -85,6 +89,15 @@ export function createUserModule(api: API) {
         return false;
       }
     },
+
+    async 'user/upload'(actx, payload) {
+      const res = await api.user.uploadFile(payload);
+      if (res.status === 200) {
+        return res.data.uuid;
+      } else {
+        return false;
+      }
+    }
   };
 
   return {

@@ -7,6 +7,9 @@
     <li v-if="!user.username">
       <router-link to="/signup">Sign Up</router-link>
     </li>
+    <li v-if="user.username">
+      <router-link to="/upload">Upload a file</router-link>
+    </li>
   </ul>
   <div class="content">
     <router-view />
@@ -14,14 +17,17 @@
 </template>
 
 <script lang="ts" setup>
-import { onServerPrefetch, toRefs } from "vue";
+import { onMounted, onServerPrefetch, toRefs } from "vue";
 import { useStore } from "./store";
 
 const store = useStore();
 
-onServerPrefetch(async () => {
+const fetchData = async () => {
   await store.dispatch("user/whoami");
-});
+}
+
+onServerPrefetch(fetchData);
+onMounted(fetchData);
 
 store.commit("ssr/title", "Hello world");
 store.commit("ssr/meta", {

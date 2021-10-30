@@ -8,7 +8,6 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "lib": ["esnext"]
   },
   "include": ["./**/*.ts"]

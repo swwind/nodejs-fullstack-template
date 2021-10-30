@@ -1,7 +1,7 @@
 import Router from "koa-router";
 import { Types } from "../utils";
 import { Users } from "../modules/user";
-import { State, Tools } from "../router";
+import type { State, Tools } from "../router";
 
 const router = new Router<State, Tools>();
 
@@ -50,6 +50,10 @@ router.post("/signup", async (ctx) => {
 
   if (!username || !password || !email)
     return ctx.fail("common/wrong_arguments");
+
+  if (!/^\w+$/i.test(username)) {
+    return ctx.fail('user/invalid_username')
+  }
 
   const profile = await Users.addUser(username, password, email);
   if (!profile.ok) return ctx.fail(profile.error);
