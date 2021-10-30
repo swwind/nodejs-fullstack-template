@@ -24,7 +24,7 @@ const store = useStore();
 
 const fetchData = async () => {
   await store.dispatch("user/whoami");
-}
+};
 
 onServerPrefetch(fetchData);
 onMounted(fetchData);

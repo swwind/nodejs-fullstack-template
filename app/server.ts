@@ -45,6 +45,7 @@ if (isProd && config.cors.enable) {
 // CORS end ========
 
 app.on("error", (e) => {
+  if (e?.code === "ECONNRESET") return;
   // FIXME: we should not ignore it
   console.error(e);
 });

@@ -28,9 +28,9 @@ const routes: Array<RouteRecordRaw> = [
     component: SignUp,
   },
   {
-    path: '/upload',
-    name: 'Upload',
-    component: () => import('../components/Upload.vue'),
+    path: "/upload",
+    name: "Upload",
+    component: () => import("../components/Upload.vue"),
   },
   {
     path: "/:a(.*)",

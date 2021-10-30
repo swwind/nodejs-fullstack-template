@@ -2,6 +2,7 @@ import {
   writeFile as _writeFile,
   statFile as _statFile,
   readFile as _readFile,
+  readFilePartial as _readFilePartial,
   MyBucketItem,
   IMetadata,
 } from "../minio";
@@ -45,6 +46,18 @@ export class Storage {
   static async readFile(filename: string): Promise<Result<Readable>> {
     try {
       return ok(await _readFile(filename));
+    } catch (e) {
+      return err("core/storage_panicked");
+    }
+  }
+
+  static async readFilePartial(
+    filename: string,
+    start: number,
+    length: number
+  ) {
+    try {
+      return ok(await _readFilePartial(filename, start, length));
     } catch (e) {
       return err("core/storage_panicked");
     }

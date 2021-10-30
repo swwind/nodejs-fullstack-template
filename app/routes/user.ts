@@ -52,7 +52,7 @@ router.post("/signup", async (ctx) => {
     return ctx.fail("common/wrong_arguments");
 
   if (!/^\w+$/i.test(username)) {
-    return ctx.fail('user/invalid_username')
+    return ctx.fail("user/invalid_username");
   }
 
   const profile = await Users.addUser(username, password, email);

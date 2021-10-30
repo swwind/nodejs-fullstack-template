@@ -10,5 +10,5 @@ export type Errors =
   | "user/login_required"
   | "user/logout_required"
   | "user/password_wrong"
-  | 'user/invalid_username'
+  | "user/invalid_username"
   | "user/permission_denied";

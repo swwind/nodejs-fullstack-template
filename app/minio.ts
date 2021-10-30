@@ -62,3 +62,16 @@ export function removeFile(filename: string | string[]) {
     return minioClient.removeObject(config.minio.bucket, filename);
   }
 }
+
+export function readFilePartial(
+  filename: string,
+  start: number,
+  length: number
+) {
+  return minioClient.getPartialObject(
+    config.minio.bucket,
+    filename,
+    start,
+    length
+  );
+}

@@ -24,8 +24,8 @@ export function createUserAPI(core: APICore) {
 
     uploadFile(file: File) {
       const formdata = new FormData();
-      formdata.set('file', file);
-      return core.makeMultipartRequest<UserFilesDoc>('/upload', formdata);
-    }
+      formdata.set("file", file);
+      return core.makeMultipartRequest<UserFilesDoc>("/upload", formdata);
+    },
   };
 }
