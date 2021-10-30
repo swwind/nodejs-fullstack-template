@@ -6,12 +6,27 @@ import path from "path";
 
 const router = new Router<State, Tools>();
 
+const inlineWhiteList = ["application/pdf"];
+
 async function sendFile(ctx: RouterContext<State, Tools>, filename: string) {
   const stat = await Storage.statFile(filename);
   if (!stat.ok) return ctx.fail(stat.error);
 
-  const contentType =
+  let contentType =
     stat.result.metaData.contenttype || "application/octet-stream";
+  let disposition = "attachment";
+
+  if (contentType.startsWith("text/")) contentType = "text/plain";
+
+  if (
+    contentType.startsWith("video/") ||
+    contentType.startsWith("audio/") ||
+    contentType.startsWith("image/") ||
+    contentType.startsWith("text/") ||
+    inlineWhiteList.indexOf(contentType) > -1
+  ) {
+    disposition = "inline";
+  }
 
   const rg = ctx.request.get("Range");
   if (rg) {
@@ -59,7 +74,8 @@ async function sendFile(ctx: RouterContext<State, Tools>, filename: string) {
     ctx.response.set("Cache-Control", "max-age=31536000");
     ctx.response.set(
       "Content-Disposition",
-      "inline; filename*=UTF-8''" +
+      disposition +
+        "; filename*=UTF-8''" +
         encodeRFC5987ValueChars(
           stat.result.metaData.filename || path.basename(filename)
         )

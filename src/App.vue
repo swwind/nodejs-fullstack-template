@@ -10,6 +10,9 @@
     <li v-if="user.username">
       <router-link to="/upload">Upload a file</router-link>
     </li>
+    <li v-if="user.username">
+      <router-link to="/files">My files</router-link>
+    </li>
   </ul>
   <div class="content">
     <router-view />
@@ -27,7 +30,11 @@ const fetchData = async () => {
 };
 
 onServerPrefetch(fetchData);
-onMounted(fetchData);
+onMounted(() => {
+  if (!store.state.user.files) {
+    fetchData();
+  }
+});
 
 store.commit("ssr/title", "Hello world");
 store.commit("ssr/meta", {

@@ -27,5 +27,9 @@ export function createUserAPI(core: APICore) {
       formdata.set("file", file);
       return core.makeMultipartRequest<UserFilesDoc>("/upload", formdata);
     },
+
+    getFiles() {
+      return core.makePOSTRequest<UserFilesDoc[]>("/files");
+    },
   };
 }

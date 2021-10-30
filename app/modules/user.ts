@@ -24,6 +24,8 @@ export type UserSessionDoc = {
 export type UserFilesDoc = {
   username: string;
   uuid: string;
+  filename: string;
+  size: number;
 };
 
 const collPassword = db.collection<UserPasswordDoc>("user/password");
@@ -161,10 +163,22 @@ export class Users {
     const result1 = await Storage.writeFile(filename, file.path, meta);
     if (result1) return result1;
 
-    const userFile: UserFilesDoc = { username, uuid };
+    const userFile: UserFilesDoc = {
+      username,
+      uuid,
+      size: file.size,
+      filename: file.name || uuid,
+    };
     const result2 = await collFiles.insertOne(userFile);
     if (!result2.acknowledged) return err("core/database_panicked");
 
     return ok(userFile);
+  }
+
+  /**
+   * Get files of a user
+   */
+  static async getUserFiles(username: string) {
+    return collFiles.find({ username }).toArray();
   }
 }

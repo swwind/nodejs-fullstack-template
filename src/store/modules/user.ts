@@ -1,13 +1,16 @@
 import { ArgumentedActionContext as ActionContext } from "..";
+import { UserFilesDoc } from "../../../app/modules/user";
 import { API } from "../../api";
 
 export type State = {
   username: string;
   email: string;
+  files: UserFilesDoc[];
 };
 
 export type Mutations<S = State> = {
   "user/update"(state: S, payload: { username: string; email: string }): void;
+  "user/set_files"(state: S, payload: UserFilesDoc[]): void;
 };
 
 export type Actions<S = State> = {
@@ -27,19 +30,24 @@ export type Actions<S = State> = {
       email: string;
     }
   ): Promise<boolean>;
-  "user/upload"(actx: ActionContext<S>, payload: File): Promise<string | false>;
+  "user/upload"(actx: ActionContext<S>, payload: File): Promise<boolean>;
+  "user/files"(actx: ActionContext<S>): Promise<void>;
 };
 
 export function createUserModule(api: API) {
   const state = (): State => ({
     username: "",
     email: "",
+    files: [],
   });
 
   const mutations: Mutations = {
     "user/update"(state, payload) {
       state.username = payload.username;
       state.email = payload.email;
+    },
+    "user/set_files"(state, payload) {
+      state.files = payload;
     },
   };
 
@@ -87,12 +95,15 @@ export function createUserModule(api: API) {
       }
     },
 
-    async "user/upload"(actx, payload) {
-      const res = await api.user.uploadFile(payload);
+    async "user/upload"(_, username) {
+      const res = await api.user.uploadFile(username);
+      return res.status === 200;
+    },
+
+    async "user/files"({ commit }) {
+      const res = await api.user.getFiles();
       if (res.status === 200) {
-        return res.data.uuid;
-      } else {
-        return false;
+        commit("user/set_files", res.data);
       }
     },
   };

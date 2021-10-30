@@ -12,7 +12,7 @@ const store = useStore();
 const file: Ref<File | null> = ref(null);
 
 const change = (e: any) => {
-  var files = e.target.files || e.dataTransfer.files;
+  const files = e.target.files || e.dataTransfer.files;
   if (!files.length) return;
   file.value = files[0];
 };
@@ -20,11 +20,11 @@ const change = (e: any) => {
 const upload = async () => {
   if (!file.value) return;
   console.log("uploading");
-  const uuid = await store.dispatch("user/upload", file.value);
-  if (uuid) {
-    console.log(`uploaded to ${uuid}`);
+  const success = await store.dispatch("user/upload", file.value);
+  if (success) {
+    alert("upload success");
   } else {
-    console.log("failed to upload");
+    alert("failed");
   }
 };
 </script>

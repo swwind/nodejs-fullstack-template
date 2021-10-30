@@ -5,9 +5,6 @@ import {
   createWebHistory,
 } from "vue-router";
 
-const SignIn = () => import("../components/SignIn.vue");
-const SignUp = () => import("../components/SignUp.vue");
-
 import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";
 
@@ -20,17 +17,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/signin",
     name: "SignIn",
-    component: SignIn,
+    component: () => import("../components/SignIn.vue"),
   },
   {
     path: "/signup",
     name: "SignUp",
-    component: SignUp,
+    component: () => import("../components/SignUp.vue"),
   },
   {
     path: "/upload",
     name: "Upload",
     component: () => import("../components/Upload.vue"),
+  },
+  {
+    path: "/files",
+    name: "Files",
+    component: () => import("../components/Files.vue"),
   },
   {
     path: "/:a(.*)",

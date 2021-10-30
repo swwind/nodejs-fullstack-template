@@ -12,5 +12,6 @@ module.exports = {
   plugins: ["prettier"],
   rules: {
     "prettier/prettier": 2,
+    '@typescript-eslint/ban-types': 0,
   }
 };

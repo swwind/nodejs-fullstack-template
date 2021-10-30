@@ -22,4 +22,14 @@ router.post("/upload", async (ctx) => {
   ctx.end(200, result.result);
 });
 
+router.post("/files", async (ctx) => {
+  if (!ctx.state.username) {
+    return ctx.fail("user/login_required");
+  }
+
+  const files = await Users.getUserFiles(ctx.state.username);
+
+  ctx.end(200, files);
+});
+
 export default router;

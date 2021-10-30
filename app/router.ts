@@ -16,7 +16,7 @@ export type State = {
 export type { File };
 
 export type Tools = {
-  end<T extends Record<string, unknown>>(status: number, data: T): void;
+  end<T extends {}>(status: number, data: T): void;
   fail(error: Errors): void;
   data: {
     param(name: string, type: Types.String): string | null;
