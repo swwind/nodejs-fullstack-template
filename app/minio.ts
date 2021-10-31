@@ -6,8 +6,8 @@ const minioClient = new Client({
   endPoint: config.minio.host,
   port: config.minio.port,
   useSSL: false,
-  accessKey: config.minio.access_key,
-  secretKey: config.minio.secret_key,
+  accessKey: config.minio.root_user,
+  secretKey: config.minio.root_password,
 });
 
 const exists = await minioClient.bucketExists(config.minio.bucket);

@@ -91,7 +91,6 @@ export const createAPICore = (config?: APICoreConfig) => {
   const makeMultipartRequest = <T = Record<string, never>>(
     url: string,
     formdata: FormData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback?: (progressEvent: any) => void,
     method: Method = "POST"
   ) => {

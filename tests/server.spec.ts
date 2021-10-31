@@ -1,17 +1,7 @@
 import { expect } from "chai";
 import { is, not, and, any } from '../app/utils';
 
-describe('Basic components', () => {
-  it('A + B testing', () => {
-    expect(0.1 + 0.2).to.not.equal(0.3);
-    expect(1 + 2).to.equal(3);
-  });
-  it('A - B testing', () => {
-    expect(1 - 2).to.equal(-1);
-  });
-});
-
-describe('Complicated components', () => {
+describe('Currified functions', () => {
   it('is()', () => {
     expect(is('number')(114)).to.be.true;
     expect(is('number')(-514)).to.be.true;

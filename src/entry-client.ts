@@ -5,7 +5,6 @@ const { app, router, store } = createApp();
 const isSSR = "__INITIAL_STATE__" in window;
 
 if (isSSR) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   store.replaceState((window as any)["__INITIAL_STATE__"]);
 }
 

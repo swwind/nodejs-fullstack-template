@@ -38,7 +38,7 @@ export function createUserModule(api: API) {
   const state = (): State => ({
     username: "",
     email: "",
-    files: [],
+    files: null,
   });
 
   const mutations: Mutations = {

@@ -1,5 +1,13 @@
 # A complicated NodeJS Full-Stack Template
 
+This project implemented a simple website with following functionalities:
+
+- User register
+- User login (and issue a cookie)
+- Upload files to server
+- Download files from server
+- List the files user uploaded
+
 Features:
 
 - Frontend: Vue 3
@@ -13,9 +21,17 @@ Features:
 - TypeScript with VSCode fully supported
 - Vite Dev Server with HMR fully supported
 
+## Code of conduct
+
+- Use the latest features
+- Keep your code **simple** and **stupid**
+- Keep your develop environment **powerful** and **stupid**
+
+For more informations, please read [docs/Develop.md](./docs/Develop.md)
+
 ## Deploy
 
-Read [install/README.md](./install/README.md)
+Read [docs/Deploy.md](./docs/Deploy.md)
 
 ## File structure
 

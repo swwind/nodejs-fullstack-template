@@ -43,15 +43,15 @@ export function getStatus(error: Errors): number {
   switch (error) {
     case "core/database_panicked":     return 500;
     case "core/internal_server_error": return 500;
-    case 'core/storage_panicked':      return 500;
-    case 'storage/file_not_exist':     return 404;
-    case 'storage/permission_denied':  return 403;
+    case "core/storage_panicked":      return 500;
+    case "storage/file_not_exist":     return 404;
+    case "storage/permission_denied":  return 403;
     case "common/wrong_arguments":     return 400;
     case "user/not_exist":             return 403;
     case "user/exist":                 return 403;
     case "user/login_required":        return 401;
     case "user/logout_required":       return 403;
-    case 'user/invalid_username':      return 403;
+    case "user/invalid_username":      return 403;
     case "user/password_wrong":        return 403;
     case "user/permission_denied":     return 403;
   }

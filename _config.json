@@ -9,8 +9,8 @@
   "minio": {
     "host": "localhost",
     "port": 9000,
-    "access_key": "cpAHPp6ew3xcXpOLK67ae2pCPbE9D3rC",
-    "secret_key": "Zcgr5y9TpfcOZ0xMTnjLzd7rPFGMnbhb",
+    "root_user": "cpAHPp6ew3xcXpOLK67ae2pCPbE9D3rC",
+    "root_password": "Zcgr5y9TpfcOZ0xMTnjLzd7rPFGMnbhb",
     "bucket": "bucket",
     "region": "cn-sd-1"
   },
