@@ -1,12 +1,10 @@
 <template>
   <div class="signup">
-    <form>
-      <input type="text" v-model="username" />
-      <input type="password" v-model="password1" />
-      <input type="password" v-model="password2" />
-      <input type="email" v-model="email" />
-      <input type="button" @click="submit" value="sign up" />
-    </form>
+    <input type="text" v-model="username" />
+    <input type="password" v-model="password1" />
+    <input type="password" v-model="password2" />
+    <input type="email" v-model="email" />
+    <input type="button" @click="submit" value="sign up" />
   </div>
 </template>
 
