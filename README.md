@@ -2,11 +2,16 @@
 
 Features:
 
-- Vue 3 + Vuex
-- Koa + MongoDB
-- Vite + Webpack 5 + esbuild
-- Eslint
-- Mocha + Chai
+- Frontend: Vue 3
+- Backend: Koa
+- Building: Vite + Webpack 5 + esbuild
+- Linting: Eslint
+- Testing: Mocha + Chai
+- DataBase: MongoDB
+- Storage: MinIO
+- Server Side Render fully supported
+- TypeScript with VSCode fully supported
+- Vite Dev Server with HMR fully supported
 
 ## Deploy
 
@@ -18,6 +23,9 @@ Read [install/README.md](./install/README.md)
 - `app/` puts all the backend codes
 
 ## How to use
+
+Note that we are using `yarn` as a node package manager instead of `npm`.
+You can install it via `npm i -g yarn`.
 
 ```bash
 # install all dependencies
@@ -43,7 +51,7 @@ yarn build
 # ======== deploy =======
 
 # after building the project, you can easily start
-# the server via `yarn start`
+# the server via `yarn start` or `node build/main.js`
 yarn start
 
 # ======== develop =======
