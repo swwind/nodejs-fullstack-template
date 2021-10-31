@@ -5,12 +5,12 @@ import { API } from "../../api";
 export type State = {
   username: string;
   email: string;
-  files: UserFilesDoc[];
+  files: UserFilesDoc[] | null;
 };
 
 export type Mutations<S = State> = {
   "user/update"(state: S, payload: { username: string; email: string }): void;
-  "user/set_files"(state: S, payload: UserFilesDoc[]): void;
+  "user/set_files"(state: S, payload: UserFilesDoc[] | null): void;
 };
 
 export type Actions<S = State> = {

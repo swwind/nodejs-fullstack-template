@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table v-if="files">
     <thead>
       <tr>
         <td>Filename</td>
@@ -19,10 +19,11 @@
       </tr>
     </tbody>
   </table>
+  <div v-else>Loading...</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onServerPrefetch } from "vue";
+import { computed, onMounted, onServerPrefetch, onUnmounted } from "vue";
 import { useStore } from "../store";
 
 const store = useStore();
@@ -35,8 +36,17 @@ const fetchData = async () => {
 
 onServerPrefetch(fetchData);
 onMounted(() => {
-  if (!files.value.length) {
+  if (!files.value) {
     fetchData();
   }
 });
+onUnmounted(() => {
+  store.commit("user/set_files", null);
+});
 </script>
+
+<style lang="less" scoped>
+table {
+  display: inline-block;
+}
+</style>
