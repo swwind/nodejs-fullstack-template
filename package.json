@@ -1,6 +1,7 @@
 {
   "name": "example",
   "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "cross-env DEV=true node build/main.js",
     "clean": "rm -rf build dist",
