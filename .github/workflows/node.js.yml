@@ -46,6 +46,6 @@ jobs:
       run: |
         cp tests/config.ci.json config.json
         export MONGO_AUTH_SOURCE=admin
-        echo minio ::1 | tee -a /etc/hosts
-        echo mongo ::1 | tee -a /etc/hosts
+        echo minio ::1 | sudo tee -a /etc/hosts
+        echo mongo ::1 | sudo tee -a /etc/hosts
         yarn coverage
