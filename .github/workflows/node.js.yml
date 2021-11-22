@@ -23,13 +23,13 @@ jobs:
         cache: 'npm'
     - name: Deploy minio
       run: |
-        docker run -d -p 9000:9000 --name minio \
+        docker run -d -p 9000:9000 --name minio --dns \
                    -e "MINIO_ACCESS_KEY=testadmin" \
                    -e "MINIO_SECRET_KEY=testpassword" \
                    minio/minio server /data
     - name: Deploy mongo
       run: |
-        docker run -d -p 27017:27017 --name mongo \
+        docker run -d -p 27017:27017 --name mongo --dns \
                    -e "MONGO_INITDB_ROOT_USERNAME=testuser" \
                    -e "MONGO_INITDB_ROOT_PASSWORD=testpassword" \
                    mongo
@@ -46,6 +46,4 @@ jobs:
       run: |
         cp tests/config.ci.json config.json
         export MONGO_AUTH_SOURCE=admin
-        echo minio ::1 | sudo tee -a /etc/hosts
-        echo mongo ::1 | sudo tee -a /etc/hosts
         yarn coverage
