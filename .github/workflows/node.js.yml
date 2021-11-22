@@ -30,8 +30,8 @@ jobs:
     - name: Deploy mongo
       run: |
         docker run -d -p 27017:27017 --name mongo \
-                   -e "MONGO_INITDB_ROOT_USERNAME=testuser"
-                   -e "MONGO_INITDB_ROOT_PASSWORD=testpassword"
+                   -e "MONGO_INITDB_ROOT_USERNAME=testuser" \
+                   -e "MONGO_INITDB_ROOT_PASSWORD=testpassword" \
                    mongo
     - name: Install dependencies
       run: yarn install
