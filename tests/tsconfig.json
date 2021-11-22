@@ -5,6 +5,7 @@
     "types": ["jest", "should", "supertest"],
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "skipLibCheck": true,
   },
   "include": ["**/*.ts"]
 }
