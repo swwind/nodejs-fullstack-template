@@ -1,0 +1,31 @@
+image: node:lts-gallium
+
+services:
+  - mongo:5.0.3
+  - name: minio/minio
+    alias: minio
+    command: ["server", "/minio"]
+
+variables:
+  MINIO_ACCESS_KEY: testadmin
+  MINIO_SECRET_KEY: testpassword
+  MONGO_INITDB_ROOT_USERNAME: testuser
+  MONGO_INITDB_ROOT_PASSWORD: testpassword
+
+# This folder is cached between builds
+# https://docs.gitlab.com/ee/ci/yaml/index.html#cache
+cache:
+  paths:
+    - node_modules/
+
+test_build:
+  script: |
+    node --version
+    yarn --version
+    yarn
+    yarn build:check
+    yarn build
+    yarn lint
+    cp tests/config.ci.json config.json
+    export MONGO_AUTH_SOURCE=admin
+    yarn coverage

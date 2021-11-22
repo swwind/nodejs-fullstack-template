@@ -1,5 +1,6 @@
 import { createSSRApp, createApp as createVueApp } from "vue";
 import App from "./App.vue";
+import Translate from "./components/Translate.vue";
 import { createRouter } from "./router";
 import { createStore } from "./store";
 import { createAPI } from "./api";
@@ -12,6 +13,8 @@ export function createApp(config?: APICoreConfig) {
   const store = createStore(api);
   app.use(store);
   app.use(router);
+
+  app.component("translate", Translate);
 
   return { app, router, store };
 }

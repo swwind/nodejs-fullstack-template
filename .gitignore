@@ -10,3 +10,5 @@
 *.pem
 /.vscode
 /.nyc_output
+/.idea
+/coverage

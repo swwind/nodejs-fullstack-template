@@ -1,48 +1,74 @@
 <template>
   <ul class="nav">
-    <li><router-link to="/">Home</router-link></li>
-    <li v-if="!user.username">
-      <router-link to="/signin">Sign In</router-link>
+    <li>
+      <router-link to="/">
+        <translate text="home" />
+      </router-link>
     </li>
-    <li v-if="!user.username">
-      <router-link to="/signup">Sign Up</router-link>
+    <li v-if="!username">
+      <router-link to="/signin">
+        <translate text="sign_in" />
+      </router-link>
     </li>
-    <li v-if="user.username">
-      <router-link to="/upload">Upload a file</router-link>
+    <li v-if="!username">
+      <router-link to="/signup">
+        <translate text="sign_up" />
+      </router-link>
     </li>
-    <li v-if="user.username">
-      <router-link to="/files">My files</router-link>
+    <li v-if="username">
+      <router-link to="/files">
+        <translate text="my_files" />
+      </router-link>
+    </li>
+    <li v-if="username">
+      <router-link to="/sessions">
+        <translate text="sessions" />
+      </router-link>
     </li>
   </ul>
   <div class="content">
     <router-view />
   </div>
+  <div class="content">
+    <button v-for="lang in langs" @click="changeLang(lang)" :key="lang">
+      {{ getLanguageName(lang) }}
+    </button>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onServerPrefetch, toRefs } from "vue";
+import { computed, onMounted, onServerPrefetch } from "vue";
+import { Languages, getLanguageName, getAllLanguages } from "./locale";
 import { useStore } from "./store";
 
 const store = useStore();
 
-const fetchData = async () => {
-  await store.dispatch("user/whoami");
-};
+const username = computed(() => store.getters.username);
 
-onServerPrefetch(fetchData);
+const fetchUserProfile = () => store.dispatch("user/whoami");
+
+onServerPrefetch(fetchUserProfile);
 onMounted(() => {
-  if (!store.state.user.files) {
-    fetchData();
+  if (!username.value) {
+    fetchUserProfile();
   }
 });
 
 store.commit("ssr/title", "Hello world");
 store.commit("ssr/meta", {
   name: "description",
-  content: "desc is not allowed in this page",
+  content: "This is an example description",
 });
 
-const { user } = toRefs(store.state);
+const langs = getAllLanguages();
+
+const changeLang = (lang: Languages) =>
+  store.dispatch("locale/change_language", lang);
+
+const fetchLanguage = () =>
+  store.dispatch("locale/change_language", store.state.locale.lang);
+
+onServerPrefetch(fetchLanguage);
 </script>
 
 <style lang="less">

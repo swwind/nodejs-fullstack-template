@@ -1,19 +1,19 @@
 import Router, { RouterContext } from "koa-router";
 import { Storage } from "../modules/storage";
 import type { State, Tools } from "../router";
-import { encodeRFC5987ValueChars, Types } from "../utils";
+import { encodeRFC5987ValueChars } from "../utils";
 import path from "path";
-
-const router = new Router<State, Tools>();
+import * as yup from "yup";
+import { filenameScheme, usernameScheme } from "./user";
+import { Users } from "../modules/user";
 
 const inlineWhiteList = ["application/pdf"];
 
-async function sendFile(ctx: RouterContext<State, Tools>, filename: string) {
-  const stat = await Storage.statFile(filename);
-  if (!stat.ok) return ctx.fail(stat.error);
+async function sendFile(ctx: RouterContext<State, Tools>, filepath: string) {
+  const stat = await Storage.statFile(filepath);
+  const filename = path.basename(filepath);
 
-  let contentType =
-    stat.result.metaData.contenttype || "application/octet-stream";
+  let contentType = stat.metaData.contenttype || "application/octet-stream";
   let disposition = "attachment";
 
   if (contentType.startsWith("text/")) contentType = "text/plain";
@@ -30,7 +30,7 @@ async function sendFile(ctx: RouterContext<State, Tools>, filename: string) {
 
   const rg = ctx.request.get("Range");
   if (rg) {
-    const range = [0, stat.result.size - 1, stat.result.size];
+    const range = [0, stat.size - 1, stat.size];
     if (rg && rg.startsWith("bytes=")) {
       const [st, ed] = rg.slice(6).split("-");
       if (st) range[0] = Number(st);
@@ -41,20 +41,19 @@ async function sendFile(ctx: RouterContext<State, Tools>, filename: string) {
       isNaN(range[0]) ||
       isNaN(range[1]) ||
       range[0] < 0 ||
-      range[1] >= stat.result.size ||
+      range[1] >= stat.size ||
       range[0] > range[1]
     ) {
-      ctx.response.status = 400;
-      ctx.response.body = "BAD REQUEST";
+      ctx.response.status = 416;
+      ctx.response.set("Content-Range", `bytes */${range[2]}`);
       return;
     }
 
     const stream = await Storage.readFilePartial(
-      filename,
+      filepath,
       range[0],
       range[1] - range[0] + 1
     );
-    if (!stream.ok) return ctx.fail(stream.error);
 
     ctx.response.status = 206;
     ctx.set("Content-Type", contentType);
@@ -62,46 +61,36 @@ async function sendFile(ctx: RouterContext<State, Tools>, filename: string) {
     ctx.set("Accept-Ranges", "bytes");
     ctx.set("Cache-Control", "max-age=31536000");
     ctx.set("Content-Range", `bytes ${range[0]}-${range[1]}/${range[2]}`);
-    ctx.response.body = stream.result;
+    ctx.response.body = stream;
   } else {
-    const stream = await Storage.readFile(filename);
-    if (!stream.ok) return ctx.fail(stream.error);
+    const stream = await Storage.readFile(filepath);
 
     ctx.response.status = 200;
     ctx.response.set("Content-Type", contentType);
-    ctx.response.set("Content-Length", String(stat.result.size));
+    ctx.response.set("Content-Length", String(stat.size));
     ctx.response.set("Accept-Ranges", "bytes");
     ctx.response.set("Cache-Control", "max-age=31536000");
     ctx.response.set(
       "Content-Disposition",
-      disposition +
-        "; filename*=UTF-8''" +
-        encodeRFC5987ValueChars(
-          stat.result.metaData.filename || path.basename(filename)
-        )
+      disposition + "; filename*=UTF-8''" + encodeRFC5987ValueChars(filename)
     );
-    ctx.response.body = stream.result;
+    ctx.response.body = stream;
   }
 }
 
-router.get("/user/:username/:uuid", async (ctx) => {
-  if (!ctx.state.username) {
-    return ctx.fail("user/login_required");
-  }
-  const username = ctx.data.param("username", Types.String) ?? "";
-  const uuid = ctx.data.param("uuid", Types.String) ?? "";
+const router = new Router<State, Tools>();
 
-  if (!username || !uuid) {
-    return ctx.fail("common/wrong_arguments");
-  }
+const getUserFileScheme = yup.object({
+  username: usernameScheme.required(),
+  filename: filenameScheme.required(),
+});
 
-  if (username !== ctx.state.username) {
-    return ctx.fail("storage/permission_denied");
-  }
+router.get("/user/:username/:filename", async (ctx) => {
+  const { username, filename } = await getUserFileScheme.validate(ctx.params);
 
-  const filename = `/user/${username}/${uuid}`;
+  await Users.visibleToUser(username, filename, ctx.state.username);
 
-  await sendFile(ctx, filename);
+  await sendFile(ctx, Users.getFilepath(username, filename));
 });
 
 export default router;

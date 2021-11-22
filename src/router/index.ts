@@ -1,6 +1,6 @@
 import {
   RouteRecordRaw,
-  createRouter as createVueRouter,
+  createRouter as _createRouter,
   createMemoryHistory,
   createWebHistory,
 } from "vue-router";
@@ -25,14 +25,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../components/SignUp.vue"),
   },
   {
-    path: "/upload",
-    name: "Upload",
-    component: () => import("../components/Upload.vue"),
-  },
-  {
     path: "/files",
     name: "Files",
-    component: () => import("../components/Files.vue"),
+    component: () => import("../views/Files.vue"),
+  },
+  {
+    path: "/sessions",
+    name: "Sessions",
+    component: () => import("../views/Sessions.vue"),
   },
   {
     path: "/:a(.*)",
@@ -42,7 +42,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 export function createRouter() {
-  return createVueRouter({
+  return _createRouter({
     history: import.meta.env.SSR ? createMemoryHistory() : createWebHistory(),
     routes,
   });

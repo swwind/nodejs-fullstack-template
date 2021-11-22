@@ -1,0 +1,29 @@
+{
+  "mongo": {
+    "host": "mongo",
+    "port": 27017,
+    "dbname": "testing",
+    "username": "testuser",
+    "password": "testpassword"
+  },
+  "minio": {
+    "host": "minio",
+    "port": 9000,
+    "root_user": "testadmin",
+    "root_password": "testpassword",
+    "bucket": "testing",
+    "region": "us-es-1"
+  },
+  "port": 8080,
+  "https": {
+    "enable": false,
+    "hsts": true,
+    "redirect": true,
+    "key": "localhost-key.pem",
+    "cert": "localhost.pem"
+  },
+  "cors": {
+    "enable": true,
+    "host": "http://localhost:8080"
+  }
+}

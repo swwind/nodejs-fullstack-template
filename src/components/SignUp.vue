@@ -3,8 +3,9 @@
     <input type="text" v-model="username" />
     <input type="password" v-model="password1" />
     <input type="password" v-model="password2" />
-    <input type="email" v-model="email" />
-    <input type="button" @click="submit" value="sign up" />
+    <button @click="submit">
+      <translate text="sign_up" />
+    </button>
   </div>
 </template>
 
@@ -19,7 +20,6 @@ const router = useRouter();
 const username = ref("");
 const password1 = ref("");
 const password2 = ref("");
-const email = ref("");
 
 async function submit() {
   if (password1.value !== password2.value) {
@@ -29,11 +29,12 @@ async function submit() {
   const success = await store.dispatch("user/signup", {
     username: username.value,
     password: password1.value,
-    email: email.value,
   });
 
   if (success) {
     router.push("/");
+  } else {
+    alert("sign up failed");
   }
 }
 </script>

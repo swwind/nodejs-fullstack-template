@@ -1,9 +1,8 @@
 import db from "../db";
-import { File } from "../router";
-import { EmptyResult, err, ok, randomString, Result } from "../utils";
+import { assert, HTTPError, randomString } from "../utils";
+import type { File } from "formidable";
 import { Storage } from "./storage";
-import mimetypes from "mime-types";
-import { IMetadata } from "../minio";
+import mimeTypes from "mime-types";
 
 export type UserPasswordDoc = {
   _id: string;
@@ -13,172 +12,292 @@ export type UserPasswordDoc = {
 export type UserProfileDoc = {
   _id: string;
   email: string;
+  nickname: string;
+  avatar: string;
 };
+
+export type UserProfileMutableData = Partial<
+  Pick<UserProfileDoc, "email" | "avatar" | "nickname">
+>;
 
 export type UserSessionDoc = {
   _id: string;
-  cookie: string;
-  expires: Date;
+  userId: string;
+  expires: number;
+  userAgent: string;
+  lastActive: number;
 };
 
-export type UserFilesDoc = {
-  username: string;
-  uuid: string;
+export type UserFileDoc = {
+  userId: string;
   filename: string;
   size: number;
+  created: number;
+  updated: number;
+  private: boolean;
 };
 
 const collPassword = db.collection<UserPasswordDoc>("user/password");
 const collProfile = db.collection<UserProfileDoc>("user/profile");
 const collSession = db.collection<UserSessionDoc>("user/session");
-const collFiles = db.collection<UserFilesDoc>("user/files");
+const collFiles = db.collection<UserFileDoc>("user/files");
 
+await collFiles.createIndex(
+  {
+    userId: 1,
+    filename: 1,
+  },
+  {
+    unique: true,
+  }
+);
+
+/**
+ * User abstractions
+ */
 export class Users {
   /**
    * Sign up a new user
    */
   static async addUser(
     username: string,
-    password: string,
-    email: string
-  ): Promise<Result<UserProfileDoc>> {
+    password: string
+  ): Promise<UserProfileDoc> {
     const find = await collPassword.findOne({ _id: username });
-    if (find) return err("user/exist");
+    if (find) {
+      throw new HTTPError(400, "user/exist");
+    }
 
     const result1 = await collPassword.insertOne({ _id: username, password });
-    if (!result1.acknowledged) return err("core/database_panicked");
+    assert(result1.acknowledged);
 
-    const profile = { _id: username, email };
+    const profile: UserProfileDoc = {
+      _id: username,
+      email: "",
+      nickname: "",
+      avatar: "",
+    };
     const result2 = await collProfile.insertOne(profile);
-    if (!result2.acknowledged) return err("core/database_panicked");
+    assert(result2.acknowledged);
 
-    return ok(profile);
+    return profile;
   }
 
   /**
    * Get a user's profile.
-   * Returns `user/not_exist` if user is not exist
    */
-  static async getUserProfile(
-    username: string
-  ): Promise<Result<UserProfileDoc>> {
+  static async getUserProfile(username: string): Promise<UserProfileDoc> {
     const result = await collProfile.findOne({ _id: username });
-    if (!result) return err("user/not_exist");
+    if (!result) {
+      throw new HTTPError(404, "user/not_exist");
+    }
 
-    return ok(result);
+    return result;
   }
 
   /**
-   * Get a bunch of user's profile.
-   * Returns `user/not_exist` if any of the given user was not found in the list
+   * Change user's profile
    */
-  static async getUserProfileList(
-    username: string[]
-  ): Promise<Result<Array<UserProfileDoc>>> {
-    const result = await collProfile.find({ _id: { $in: username } }).toArray();
-    if (result.length !== username.length) {
-      return err("user/not_exist");
-    }
-    return ok(result);
+  static async changeUserProfile(
+    username: string,
+    profile: UserProfileMutableData
+  ): Promise<UserProfileDoc> {
+    const result = await collProfile.findOneAndUpdate(
+      { _id: username },
+      { $set: profile },
+      { returnDocument: "after" }
+    );
+    assert(result.ok && result.value);
+
+    return result.value;
   }
 
   /**
    * Verify if the user's password is correct.
-   * Returns `user/not_exist` if user is not even exist
    */
-  static async verifyUser(
-    username: string,
-    password: string
-  ): Promise<Result<boolean>> {
+  static async verifyUser(username: string, password: string): Promise<void> {
     const find = await collPassword.findOne({ _id: username });
-    if (!find) return err("user/not_exist");
-    return ok(find.password === password);
-  }
-
-  /**
-   * Delete a user
-   */
-  static async deleteUser(username: string): Promise<EmptyResult> {
-    await collPassword.deleteOne({ _id: username });
-    await collProfile.deleteOne({ _id: username });
-    await collSession.deleteOne({ _id: username });
-
-    return;
+    if (!find) {
+      throw new HTTPError(404, "user/not_exist");
+    }
+    if (find.password !== password) {
+      throw new HTTPError(400, "user/password_wrong");
+    }
   }
 
   /**
    * Find if a cookie reflects to someone
    * @returns username or null
    */
-  static async findCookie(cookie: string): Promise<string | null> {
-    const find = await collSession.findOne({ cookie });
-    if (!find) return null;
-
-    if (find.expires < new Date()) {
-      await collSession.deleteOne(find);
-      return null;
-    }
-
-    return find._id;
-  }
-
-  /**
-   * Issue a new cookie to username.
-   * The old one will be revoked immediately.
-   * @returns cookie or null
-   */
-  static async issueCookie(
-    username: string,
-    expires: Date
-  ): Promise<string | null> {
-    const cookie = randomString(36);
-
-    const result = await collSession.findOneAndUpdate(
-      { _id: username },
+  static async findSession(session: string): Promise<string | null> {
+    const find = await collSession.findOneAndUpdate(
       {
-        $set: { expires, cookie },
+        _id: session,
+        expires: { $gte: Date.now() },
       },
-      { upsert: true }
+      {
+        $set: {
+          lastActive: Date.now(),
+        },
+      },
+      { upsert: false }
     );
 
-    if (!result.ok) return null;
-
-    return cookie;
+    return find.ok && find.value ? find.value.userId : null;
   }
 
   /**
-   * Create a file
-   * @returns uuid
+   * Start a new session of userId
    */
-  static async createPrivateFile(username: string, file: File) {
-    const uuid = randomString(16);
-    const filename = `/user/${username}/${uuid}`;
+  static async startSession(
+    userId: string,
+    expires: number,
+    userAgent: string
+  ): Promise<string> {
+    const session = randomString(32);
+
+    const result = await collSession.insertOne({
+      _id: session,
+      userId,
+      expires,
+      userAgent,
+      lastActive: Date.now(),
+    });
+
+    assert(result.acknowledged);
+
+    return session;
+  }
+
+  /**
+   * Get all sessions
+   */
+  static async getAllSessions(userId: string): Promise<UserSessionDoc[]> {
+    return await collSession.find({ userId }).sort("lastActive", -1).toArray();
+  }
+
+  /**
+   * delete one session (or just sign out)
+   */
+  static async deleteSession(session: string): Promise<void> {
+    await collSession.deleteOne({ _id: session });
+  }
+
+  static getFilepath(userId: string, filename: string) {
+    return `/user/${userId}/${filename}`;
+  }
+
+  /**
+   * Modify a file (or create one if not exists)
+   */
+  static async createPrivateFile(userId: string, filename: string, file: File) {
+    const filepath = this.getFilepath(userId, filename);
     const mimetype =
-      (file.name && mimetypes.lookup(file.name)) || "application/octet-stream";
-    const meta: IMetadata = {
-      contenttype: file.type ?? mimetype,
-      filename: file.name || uuid,
-    };
+      file.type || mimeTypes.lookup(filename) || "application/octet-stream";
 
-    const result1 = await Storage.writeFile(filename, file.path, meta);
-    if (result1) return result1;
+    await Storage.writeFile(filepath, file.path, {
+      contenttype: mimetype,
+    });
 
-    const userFile: UserFilesDoc = {
-      username,
-      uuid,
-      size: file.size,
-      filename: file.name || uuid,
-    };
-    const result2 = await collFiles.insertOne(userFile);
-    if (!result2.acknowledged) return err("core/database_panicked");
+    const res = await collFiles.findOneAndUpdate(
+      {
+        userId,
+        filename,
+      },
+      {
+        $set: {
+          size: file.size,
+          updated: Date.now(),
+        },
+        $setOnInsert: {
+          created: Date.now(),
+          private: true,
+        },
+      },
+      {
+        upsert: true,
+        returnDocument: "after",
+      }
+    );
+    assert(res.ok && res.value);
 
-    return ok(userFile);
+    return res.value;
   }
 
   /**
-   * Get files of a user
+   * Remove private file (throws if not exist)
    */
-  static async getUserFiles(username: string) {
-    return collFiles.find({ username }).toArray();
+  static async removePrivateFile(userId: string, filename: string) {
+    const result = await collFiles.findOneAndDelete({ userId, filename });
+    assert(result.ok);
+
+    if (!result.value) {
+      throw new HTTPError(404, "user/file_not_found");
+    }
+
+    const filepath = this.getFilepath(
+      result.value.userId,
+      result.value.filename
+    );
+    await Storage.statFile(filepath);
+    await Storage.removeFile(filepath);
+  }
+
+  /**
+   * Get all files
+   */
+  static async getAllFiles(userId: string) {
+    return await collFiles.find({ userId }).sort({ updated: -1 }).toArray();
+  }
+
+  /**
+   * modify user file privacy
+   */
+  static async modifyPrivateFilePrivacy(
+    userId: string,
+    filename: string,
+    priv: boolean
+  ) {
+    const result = await collFiles.findOneAndUpdate(
+      {
+        userId,
+        filename,
+      },
+      {
+        $set: {
+          private: priv,
+        },
+      },
+      {
+        upsert: false,
+        returnDocument: "after",
+      }
+    );
+
+    assert(result.ok);
+
+    if (!result.value) {
+      throw new HTTPError(404, "user/file_not_found");
+    }
+
+    return result.value;
+  }
+
+  /**
+   * Check a file is visible to target user
+   */
+  static async visibleToUser(
+    userId: string,
+    filename: string,
+    targetUserId: string
+  ) {
+    const find = await collFiles.findOne({ userId, filename });
+    if (!find) {
+      throw new HTTPError(404);
+    }
+
+    if (targetUserId !== userId && find.private) {
+      throw new HTTPError(403);
+    }
   }
 }

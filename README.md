@@ -1,20 +1,12 @@
-# A complicated NodeJS Full-Stack Template
-
-This project implemented a simple website with following functionalities:
-
-- User register
-- User login (and issue a cookie)
-- Upload files to server
-- Download files from server
-- List the files user uploaded
+# Nodejs Fullstack Template
 
 Features:
 
-- Frontend: Vue 3
+- Frontend: Vue 3 (SFX + `<script setup>`)
 - Backend: Koa
 - Building: Vite + Webpack 5 + esbuild
 - Linting: Eslint
-- Testing: Mocha + Chai
+- Testing: Jest + Supertest + Should
 - DataBase: MongoDB
 - Storage: MinIO
 - Server Side Render fully supported
@@ -64,11 +56,25 @@ yarn build:server
 # or build all threes parts within one command
 yarn build
 
+# because of vite build does not check typescript grammar
+# we need to check it manually (it takes a long time!)
+yarn build:check
+
 # ======== deploy =======
 
 # after building the project, you can easily start
 # the server via `yarn start` or `node build/main.js`
 yarn start
+
+# pass --debug, --info, --warn, or --error to
+# set log level, default log level is --info.
+yarn start --debug
+
+# use -c xxx.json to specify a config file (default ./config.json)
+yarn start -c ~/.example/config.json
+
+# use --generate to generate a default config file
+yarn start --generate
 
 # ======== develop =======
 
@@ -101,5 +107,4 @@ yarn lint:fix
 yarn test
 # check coverage
 yarn coverage
-
 ```

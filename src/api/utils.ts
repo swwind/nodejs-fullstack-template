@@ -21,6 +21,7 @@ export type APIResponse<T> = {
 export type APICoreConfig = Partial<{
   cookie: string;
   host: string;
+  language: string;
 }>;
 
 /**
@@ -35,7 +36,7 @@ export const createAPICore = (config?: APICoreConfig) => {
     headers: config?.cookie ? { Cookie: config.cookie } : {},
   });
 
-  const makeRequest = async <T = Record<string, never>>(
+  const makeRequest = async <T = {}>(
     response: Promise<AxiosResponse>
   ): Promise<APIResponse<T>> => {
     try {
@@ -43,7 +44,7 @@ export const createAPICore = (config?: APICoreConfig) => {
       if (typeof res.data === "object") {
         return {
           status: res.status,
-          error: "",
+          error: res.data?.error ?? "",
           data: res.data as T,
         };
       }
@@ -62,7 +63,7 @@ export const createAPICore = (config?: APICoreConfig) => {
   };
 
   const makeJSONRequest = (method: Method) => {
-    return <T = Record<string, never>, D = Record<string, unknown>>(
+    return <T = {}, D = {}>(
       url: string,
       data?: D,
       headers?: Record<string, string>
@@ -88,7 +89,7 @@ export const createAPICore = (config?: APICoreConfig) => {
    * @param callback on upload progress event callback
    * @param method defaults to POST
    */
-  const makeMultipartRequest = <T = Record<string, never>>(
+  const makeMultipartRequest = <T = {}>(
     url: string,
     formdata: FormData,
     callback?: (progressEvent: any) => void,
@@ -111,6 +112,7 @@ export const createAPICore = (config?: APICoreConfig) => {
     makeGETRequest: makeJSONRequest("GET"),
     makePOSTRequest: makeJSONRequest("POST"),
     makePUTRequest: makeJSONRequest("PUT"),
+    makePATCHRequest: makeJSONRequest("PATCH"),
     makeDELETERequest: makeJSONRequest("DELETE"),
     makeMultipartRequest,
     makeJSONRequest,

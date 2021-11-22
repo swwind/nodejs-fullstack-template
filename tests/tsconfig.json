@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "types": ["jest", "should", "supertest"],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+  },
+  "include": ["**/*.ts"]
+}
