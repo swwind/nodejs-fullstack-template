@@ -17,6 +17,13 @@ export function randomString(length: number) {
 }
 
 /**
+ * Calculate sha256 and return its base64
+ */
+export function sha256(text: string) {
+  return crypto.createHash("sha256").update(text).digest("base64");
+}
+
+/**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
  */
 export function encodeRFC5987ValueChars(str: string) {

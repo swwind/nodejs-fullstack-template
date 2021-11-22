@@ -50,9 +50,9 @@ export async function render(
     }),
   ].join("\n    ");
 
-  const initialState = `<script>window.__INITIAL_STATE__=${JSON.stringify(
+  const initialState = `<script id="init-data" type="application/json">${JSON.stringify(
     store.state
-  ).replace(/\//g, "\\/")};</script>`;
+  ).replace(/\//g, "\\/")}</script>`;
 
   return [html, preloadLinks, metadata, initialState, status];
 }

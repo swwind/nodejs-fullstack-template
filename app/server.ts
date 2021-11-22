@@ -157,6 +157,13 @@ app.use(async (ctx) => {
         language,
       });
 
+    if (config.csp) {
+      ctx.response.set(
+        "Content-Security-Policy",
+        `default-src 'self'; img-src *; script-src 'self' 'unsafe-inline'`
+      );
+    }
+
     const html = template
       .replace("<html>", `<html lang="${language}">`)
       .replace(

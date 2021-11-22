@@ -42,6 +42,7 @@ const configScheme = yup.object({
       host: yup.string().default("http://localhost:8080").required(),
     })
     .required(),
+  csp: yup.boolean().required(),
 });
 
 export type Config = yup.Asserts<typeof configScheme>;

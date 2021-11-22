@@ -2,10 +2,16 @@ import { createApp } from "./main";
 
 const { app, router, store } = createApp();
 
-const isSSR = "__INITIAL_STATE__" in window;
+const initData = document.getElementById("init-data");
+let isSSR = false;
 
-if (isSSR) {
-  store.replaceState((window as any)["__INITIAL_STATE__"]);
+if (initData && initData.textContent) {
+  try {
+    store.replaceState(JSON.parse(initData.textContent));
+    isSSR = true;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 router.isReady().then(() => {
