@@ -33,7 +33,8 @@ jobs:
                    -e "MONGO_INITDB_ROOT_PASSWORD=testpassword" \
                    mongo
     - name: Install dependencies
-      run: yarn install
+      run: |
+        yarn install
     - name: Build
       run: |
         yarn build:check
