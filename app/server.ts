@@ -86,7 +86,9 @@ app.on("error", (e) => {
   d.error(e.message);
 });
 
-app.use(body({ multipart: true }));
+app.use(
+  body({ multipart: true, formidable: { maxFileSize: config.maxFileSize } })
+);
 app.use(serve("public"));
 app.use(serve("static"));
 

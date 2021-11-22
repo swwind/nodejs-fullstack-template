@@ -92,7 +92,7 @@ export const createAPICore = (config?: APICoreConfig) => {
   const makeMultipartRequest = <T = {}>(
     url: string,
     formdata: FormData,
-    callback?: (progressEvent: any) => void,
+    callback?: (progressEvent: ProgressEvent) => void,
     method: Method = "POST"
   ) => {
     return makeRequest<T>(

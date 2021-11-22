@@ -25,5 +25,7 @@
   "cors": {
     "enable": true,
     "host": "http://localhost:8080"
-  }
+  },
+  "csp": true,
+  "maxFileSize": 20000000
 }

@@ -43,6 +43,7 @@ const configScheme = yup.object({
     })
     .required(),
   csp: yup.boolean().required(),
+  maxFileSize: yup.number().integer().positive().default(20000000).required(),
 });
 
 export type Config = yup.Asserts<typeof configScheme>;
