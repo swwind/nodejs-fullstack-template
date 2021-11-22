@@ -26,6 +26,6 @@ test_build:
     yarn build:check
     yarn build
     yarn lint
-    cp tests/config.ci.json config.json
+    cp tests/config.gitlab.json config.json
     export MONGO_AUTH_SOURCE=admin
     yarn coverage
