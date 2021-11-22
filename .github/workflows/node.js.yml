@@ -23,13 +23,13 @@ jobs:
         cache: 'npm'
     - name: Deploy minio
       run: |
-        docker run -d -p 9000:9000 --name minio --dns \
+        docker run -d -p 9000:9000 --name minio --hostname minio \
                    -e "MINIO_ACCESS_KEY=testadmin" \
                    -e "MINIO_SECRET_KEY=testpassword" \
                    minio/minio server /data
     - name: Deploy mongo
       run: |
-        docker run -d -p 27017:27017 --name mongo --dns \
+        docker run -d -p 27017:27017 --name mongo --hostname mongo \
                    -e "MONGO_INITDB_ROOT_USERNAME=testuser" \
                    -e "MONGO_INITDB_ROOT_PASSWORD=testpassword" \
                    mongo
