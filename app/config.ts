@@ -42,7 +42,7 @@ const configScheme = yup.object({
       host: yup.string().default("http://localhost:8080").required(),
     })
     .required(),
-  csp: yup.boolean().required(),
+  csp: yup.boolean().default(true).required(),
   maxFileSize: yup.number().integer().positive().default(20000000).required(),
 });
 
