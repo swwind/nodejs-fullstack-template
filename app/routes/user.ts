@@ -2,7 +2,6 @@ import Router from "koa-router";
 import { HTTPError } from "../utils";
 import { Users } from "../modules/user";
 import type { State, Tools } from "../router";
-import { ensureGuest, ensureUser } from "./utils";
 import * as yup from "yup";
 
 const router = new Router<State, Tools>();
@@ -15,7 +14,9 @@ const signinScheme = yup.object({
   password: passwordScheme.required(),
 });
 
-router.post("/signin", ensureGuest, async (ctx) => {
+router.post("/signin", async (ctx) => {
+  ctx.ensureGuest();
+
   const { username, password } = await signinScheme.validate(ctx.request.body);
 
   const userAgent = ctx.request.get("User-Agent");
@@ -40,7 +41,9 @@ const signupScheme = yup.object({
   password: passwordScheme.required(),
 });
 
-router.post("/signup", ensureGuest, async (ctx) => {
+router.post("/signup", async (ctx) => {
+  ctx.ensureGuest();
+
   const { username, password } = await signupScheme.validate(ctx.request.body);
 
   const userAgent = ctx.request.get("User-Agent");
@@ -58,7 +61,9 @@ router.post("/signup", ensureGuest, async (ctx) => {
   ctx.end(200, profile);
 });
 
-router.get("/session", ensureUser, async (ctx) => {
+router.get("/session", async (ctx) => {
+  ctx.ensureUser();
+
   const result = await Users.getAllSessions(ctx.state.username);
 
   ctx.end(200, result);
@@ -70,7 +75,9 @@ const deleteSessionScheme = yup.object({
   session: sessionScheme.required(),
 });
 
-router.delete("/session/:session", ensureUser, async (ctx) => {
+router.delete("/session/:session", async (ctx) => {
+  ctx.ensureUser();
+
   const { session } = await deleteSessionScheme.validate(ctx.params);
 
   const user = await Users.findSession(session);
@@ -88,7 +95,9 @@ router.delete("/session/:session", ensureUser, async (ctx) => {
   ctx.end(204);
 });
 
-router.delete("/signout", ensureUser, async (ctx) => {
+router.delete("/signout", async (ctx) => {
+  ctx.ensureUser();
+
   const session = ctx.cookies.get("auth") as string;
 
   await Users.deleteSession(session);
@@ -128,7 +137,9 @@ const patchProfileScheme = yup.object({
   avatar: avatarScheme,
 });
 
-router.patch("/profile", ensureUser, async (ctx) => {
+router.patch("/profile", async (ctx) => {
+  ctx.ensureUser();
+
   const data = patchProfileScheme.cast(ctx.request.body, {
     stripUnknown: true,
   });
@@ -144,7 +155,9 @@ const uploadFileScheme = yup.object({
   filename: filenameScheme.required(),
 });
 
-router.put("/file/:filename", ensureUser, async (ctx) => {
+router.put("/file/:filename", async (ctx) => {
+  ctx.ensureUser();
+
   const { filename: _filename } = await uploadFileScheme.validate(ctx.params);
   const filename = decodeURIComponent(_filename);
 
@@ -165,7 +178,9 @@ const patchFileScheme = yup.object({
   private: privateScheme.required(),
 });
 
-router.patch("/file/:filename", ensureUser, async (ctx) => {
+router.patch("/file/:filename", async (ctx) => {
+  ctx.ensureUser();
+
   const { filename: _filename } = await uploadFileScheme.validate(ctx.params);
   const filename = decodeURIComponent(_filename);
 
@@ -180,7 +195,9 @@ router.patch("/file/:filename", ensureUser, async (ctx) => {
   ctx.end(200, result);
 });
 
-router.delete("/file/:filename", ensureUser, async (ctx) => {
+router.delete("/file/:filename", async (ctx) => {
+  ctx.ensureUser();
+
   const { filename: _filename } = await uploadFileScheme.validate(ctx.params);
   const filename = decodeURIComponent(_filename);
 
@@ -189,7 +206,9 @@ router.delete("/file/:filename", ensureUser, async (ctx) => {
   ctx.end(204);
 });
 
-router.get("/file", ensureUser, async (ctx) => {
+router.get("/file", async (ctx) => {
+  ctx.ensureUser();
+
   const result = await Users.getAllFiles(ctx.state.username);
 
   ctx.end(200, result);

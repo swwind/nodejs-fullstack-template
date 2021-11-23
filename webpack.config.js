@@ -24,9 +24,10 @@ module.exports = {
   module: {
     rules: [{
       test: /\.ts$/,
-      loader: 'ts-loader',
+      loader: 'esbuild-loader',
       options: {
-        configFile: 'app/tsconfig.json'
+        loader: 'ts',
+        target: 'node16'
       }
     }]
   },

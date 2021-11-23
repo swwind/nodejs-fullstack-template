@@ -27,6 +27,17 @@ export type Tools = {
    * Get all files from 'file' field
    */
   files(): File[];
+
+  /**
+   * Ensure is registered user visiting this page.
+   * Otherwise throws 401 Unauthorized
+   */
+  ensureUser(): void;
+  /**
+   * Ensure is guest visiting this page.
+   * Otherwise throws 403 Forbidden
+   */
+  ensureGuest(): void;
 };
 
 const router = new Router<State, Tools>();
@@ -67,6 +78,18 @@ router.use("/", async (ctx, next) => {
       throw new HTTPError(400, "common/file_missing");
     }
     return Array.isArray(file) ? file : [file];
+  };
+
+  ctx.ensureUser = () => {
+    if (!ctx.state.username) {
+      throw new HTTPError(401, "user/login_required");
+    }
+  };
+
+  ctx.ensureGuest = () => {
+    if (ctx.state.username) {
+      throw new HTTPError(403, "user/logout_required");
+    }
   };
 
   try {

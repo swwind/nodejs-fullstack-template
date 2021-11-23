@@ -12,14 +12,15 @@ Features:
 - Server Side Render fully supported
 - TypeScript with VSCode fully supported
 - Vite Dev Server with HMR fully supported
+- Build the whole project within 4s!
 
 ## Code of conduct
 
 - Use the latest features
 - Keep your code **simple** and **stupid**
-- Keep your develop environment **powerful** and **stupid**
+- Keep your develop environment **powerful** and **easy to use**
 
-For more informations, please read [docs/Develop.md](./docs/Develop.md)
+For more informations and FAQs, please read [docs/Develop.md](./docs/Develop.md)
 
 ## Deploy
 

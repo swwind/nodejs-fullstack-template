@@ -10,26 +10,43 @@ It is better for you to have a read of this articles before you start to modify 
 
 Server side rendering is a major problem in full-stack projects. The most complicated part is how we fetch user's data on server and preventing it to be fetched twice on client.
 
-Vue.js has given an official solution for [Data Pre-Fetching and State](https://ssr.vuejs.org/guide/data.html). We followed this solution and you can see it in `src/components/Files.vue`.
+Vue.js has given an official solution for [Data Pre-Fetching and State](https://ssr.vuejs.org/guide/data.html). We followed this solution and you can see it in `src/views/Files.vue`.
 
 ```ts
+// Create a reference to state (which should be nullable)
+// files: Computed<UserFileDoc[] | null>
 const files = computed(() => store.state.user.files);
 
-const fetchData = async () => {
-  await store.dispatch("user/files");
-};
+// Define a function to fetch all the data we need to render this page
+const fetchData = () => store.dispatch("user/files");
 
+// Register it on server-side render
+// Backend will fetch these data before start render the page
 onServerPrefetch(fetchData);
+
+// On client side, we have two situations
+//
+// 1. The data was already fetched and rendered on server.
+//    Then we can skip fetch data step and do nothing.
+//
+// 2. The data was not prepared and we need to fetch it.
+//    Simply invoke fetchData() once, and don't forget
+//    to show a loading page.
 onMounted(() => {
   if (!files.value) {
     fetchData();
   }
 });
+
+// When we leave the page, we need to remove data in order not to
+// skip the fetch-data step the next time we enter this page.
 onUnmounted(() => {
   store.commit("user/set_files", null);
 });
 ```
 
-Note that we defined `fetchData` to fetch all the data we need to render this page.
+## Build
 
-The default value of `files.value` (`store.state.user.files`) is `null`, and we will fetch the data iff `files.value === null`. If server has rendered already, then the default value of `files.value` will not be `null`, thus we can prevent client to fetch the data twice. Also, `files.value` will be reset to `null` if we leave the page in order to refetch data next time we enter the page.
+By default, our build script (`vite` and `webpack`) does **NOT** check any TypeScript Type Errors during compile time. This is intended to minimize the build time because you can check Type Errors through your IDE (or `yarn dev` server) before start the build.
+
+If you need a script to check TypeScript Type Errors, we provided `yarn build:check` to check TypeScript Type Errors manually. But it is very slow, and we didn't know why.
