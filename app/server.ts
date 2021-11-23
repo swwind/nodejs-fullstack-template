@@ -162,7 +162,9 @@ app.use(async (ctx) => {
     if (config.csp) {
       ctx.response.set(
         "Content-Security-Policy",
-        `default-src 'self'; img-src *; script-src 'self' 'unsafe-inline'`
+        config.https.enable
+          ? "default-src 'self'; img-src https://*"
+          : "default-src 'self'; img-src *"
       );
     }
 

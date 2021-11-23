@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable prettier/prettier */
 import crypto from "crypto";
 import { Errors } from "./errors";
 
@@ -17,33 +15,28 @@ export function randomString(length: number) {
 }
 
 /**
- * Calculate sha256 and return its base64
- */
-export function sha256(text: string) {
-  return crypto.createHash("sha256").update(text).digest("base64");
-}
-
-/**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
  */
 export function encodeRFC5987ValueChars(str: string) {
-  return encodeURIComponent(str)
-    // Note that although RFC3986 reserves "!", RFC5987 does not,
-    // so we do not need to escape it
-    .replace(/['()]/g, escape) // i.e., %27 %28 %29
-    .replace(/\*/g, '%2A')
-    // The following are not required for percent-encoding per RFC5987,
-    // so we can allow for a little better readability over the wire: |`^
-    .replace(/%(?:7C|60|5E)/g, unescape);
+  return (
+    encodeURIComponent(str)
+      // Note that although RFC3986 reserves "!", RFC5987 does not,
+      // so we do not need to escape it
+      .replace(/['()]/g, escape) // i.e., %27 %28 %29
+      .replace(/\*/g, "%2A")
+      // The following are not required for percent-encoding per RFC5987,
+      // so we can allow for a little better readability over the wire: |`^
+      .replace(/%(?:7C|60|5E)/g, unescape)
+  );
 }
 
-export const languages = ['en-US', 'zh-CN'];
+export const languages = ["en-US", "zh-CN"];
 
 /**
  * Asserts and throw internal server error
  */
-export function assert(check: any): asserts check {
+export function assert<T>(check: T): asserts check {
   if (!check) {
-    throw new HTTPError(500, 'core/internal_server_error');
+    throw new HTTPError(500, "core/internal_server_error");
   }
 }
