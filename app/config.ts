@@ -11,7 +11,7 @@ const configScheme = yup.object({
     .object({
       host: yup.string().default("localhost").required(),
       port: yup.number().integer().min(1).max(65525).default(27017).required(),
-      dbname: yup.string().default("hitwhoj").required(),
+      dbname: yup.string().default("example").required(),
       username: yup.string().default("username").required(),
       password: yup.string().default("password").required(),
     })
@@ -22,7 +22,7 @@ const configScheme = yup.object({
       port: yup.number().integer().min(1).max(65525).default(9000).required(),
       root_user: yup.string().default("rootadmin").required(),
       root_password: yup.string().default("rootadmin").required(),
-      bucket: yup.string().default("hitwhoj").required(),
+      bucket: yup.string().default("example").required(),
       region: yup.string().default("cn-sd-1").required(),
     })
     .required(),
